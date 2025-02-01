@@ -1,32 +1,40 @@
-import logo from './logo.svg';
-import PersonaList from './components/PersonaList';
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
+import InputArea from './components/InputArea';
+import DebatePanel from './components/DebatePanel';
 import './App.css';
 
 function App() {
-  useEffect(() => {
-    fetch('http://127.0.0.1:8000/')
-      .then(response => response.json())
-      .then(data => console.log(data))
-      .catch(error => console.error('Error fetching data:', error));
-  }, []);
+  const [messages, setMessages] = useState([]);
+
+  const handleQuestionSubmit = async (question) => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/ask_debate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ question }),
+      });
+      
+      const data = await response.json();
+      
+      setMessages(prevMessages => [
+        ...prevMessages,
+        { persona: 'User', content: question },
+        { persona: 'AI', content: data.response }
+      ]);
+    } catch (error) {
+      console.error('Error submitting question:', error);
+    }
+  };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="min-h-screen bg-gray-100 p-8">
+      <div className="max-w-3xl mx-auto space-y-6">
+        <h1 className="text-3xl font-bold text-center mb-8">PersonaParley</h1>
+        <DebatePanel messages={messages} />
+        <InputArea onSubmit={handleQuestionSubmit} />
+      </div>
     </div>
   );
 }
