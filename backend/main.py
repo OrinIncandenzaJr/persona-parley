@@ -1,17 +1,19 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# Add CORS middleware configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # allow requests from this origin
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
 
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to PersonaParley!"}
+@app.post("/ask_debate")
+async def ask_debate(request: Request):
+    data = await request.json()
+    user_input = data.get("question", "")
+    # TODO: Process user_input or pass it to LLM
+    return {"response": f"You asked: {user_input}"}
