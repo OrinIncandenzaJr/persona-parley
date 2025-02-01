@@ -1,4 +1,5 @@
 import logo from './logo.svg';
+import PersonaList from './components/PersonaList';
 import React, { useEffect } from 'react';
 import './App.css';
 
