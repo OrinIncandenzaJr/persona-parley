@@ -1,8 +1,14 @@
 import logo from './logo.svg';
+import React, { useEffect } from 'react';
 import './App.css';
 
 function App() {
-  return (
+  useEffect(() => {
+    fetch('http://127.0.0.1:8000/')
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error('Error fetching data:', error));
+  }, []);
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
