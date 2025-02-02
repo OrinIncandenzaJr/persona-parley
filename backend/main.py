@@ -76,23 +76,24 @@ async def ask_debate(payload: DebatePayload):
         
         if not payload.conversation_history:
             # If this is the first message, set up the full debate context
-            initial_system_message = """Welcome to the moderated debate. Here are all participants:
+            initial_system_message = f"""You are participating in a moderated debate. You will ONLY ever speak as your assigned role.
 
+            Available personas (for context only):
             """ + "\n".join([f"- {p['name']}: {p['description']}" for p in PERSONAS]) + """
 
-            Debate Rules:
-            1. You must speak AS your assigned persona, providing YOUR expert perspective
-            2. Never address or ask questions to other personas directly
-            3. Focus on giving your own analysis based on your expertise
-            4. You may reference points made by previous speakers, but only after giving your view
-            5. Be concise but thorough in your response
-            6. Respond directly to the Moderator's questions or previous points made
-            7. Stay within your domain of expertise"""
+            CRITICAL RULES:
+            1. NEVER impersonate or speak as if you were another persona
+            2. NEVER start your response with another persona's name
+            3. ALWAYS begin with your own direct analysis
+            4. Speak in first person from your perspective
+            5. You may reference previous points, but only after your own analysis
+            6. Stay focused on your specific domain expertise
+            7. Address your responses to the topic, not to other personas"""
             
             messages.append({"role": "system", "content": initial_system_message})
         else:
             # For subsequent messages, just identify the current speaker
-            messages.append({"role": "system", "content": f"You are {speaker['name']}. Speak directly AS this persona, not TO other personas. Your expertise: {speaker['description']}. Provide your own analysis without deferring to or questioning others."})
+            messages.append({"role": "system", "content": f"You are {speaker['name']}. IMPORTANT: Only speak as yourself, never impersonate others. Your expertise: {speaker['description']}. Begin with 'As a {speaker['name']}' or 'From my perspective' and provide your direct analysis."})
         
         # Add conversation history
         for msg in payload.conversation_history:
