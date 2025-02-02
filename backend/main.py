@@ -75,7 +75,10 @@ async def ask_debate(payload: DebatePayload):
         system_message = f"""You are a {speaker['name']} participating in a multi-persona debate.
         Your perspective: {speaker['description']}
         You are aware this is a debate with multiple viewpoints. Stay true to your perspective while
-        engaging meaningfully with others' arguments. Be concise but thorough."""
+        engaging meaningfully with others' arguments. Be concise but thorough.
+        
+        Important: Only respond to messages from the Moderator or personas who have already spoken in the conversation.
+        Do not reference or respond to personas who haven't participated yet."""
 
         # Convert conversation history to OpenAI message format
         messages = [{"role": "system", "content": system_message}]
