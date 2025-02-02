@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function InputArea({ onSubmit, selectedPersona }) {
+function InputArea({ onSubmit, selectedPersona, isInitialQuestion }) {
   const [inputText, setInputText] = useState('');
 
   const handleSubmit = (e) => {
@@ -16,8 +16,12 @@ function InputArea({ onSubmit, selectedPersona }) {
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
         className="flex-grow p-2 border border-gray-300 rounded-lg"
-        placeholder={inputText.trim() ? `Type message as Moderator...` : `${selectedPersona === 'all' ? 'Press Submit to get responses from all personas' : selectedPersona ? 'Press Submit to let selected persona respond' : 'Select a persona first'}`}
-        disabled={!selectedPersona}
+        placeholder={isInitialQuestion ? 
+          "Enter your debate question to generate relevant personas..." : 
+          (inputText.trim() ? `Type message as Moderator...` : 
+            `${selectedPersona === 'all' ? 'Press Submit to get responses from all personas' : 
+              selectedPersona ? 'Press Submit to let selected persona respond' : 'Select a persona first'}`)}
+        disabled={!isInitialQuestion && !selectedPersona}
       />
       <button
         type="submit"

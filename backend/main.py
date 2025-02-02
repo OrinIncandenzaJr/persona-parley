@@ -20,34 +20,53 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-# Predefined personas
-PERSONAS = [
-    {
-        "id": "all",
-        "name": "All",
-        "description": "Get responses from all personas"
-    },
-    {
-        "id": "blue-collar",
-        "name": "Blue Collar Worker",
-        "description": "Practical, hands-on perspective focused on labor, wages, and working conditions"
-    },
-    {
-        "id": "economist",
-        "name": "Balanced Economist",
-        "description": "Data-driven analysis of economic policies and market dynamics"
-    },
-    {
-        "id": "futurist",
-        "name": "Tech Futurist",
-        "description": "Forward-thinking perspective on technology's impact on society"
-    },
-    {
-        "id": "white-collar",
-        "name": "White Collar Worker",
-        "description": "Corporate and professional workplace perspective"
-    }
-]
+# Initialize empty personas list
+PERSONAS = []
+
+async def generate_personas(question: str):
+    """Generate relevant personas for a given debate question"""
+    system_prompt = """Given the debate question, generate 4 distinct and relevant personas that would provide valuable perspectives.
+    Return the response in a JSON array format with exactly 4 personas, each having 'id', 'name', and 'description' fields.
+    Make the IDs lowercase and hyphenated. Keep descriptions concise but informative."""
+    
+    example_format = """Example format:
+    [
+        {
+            "id": "tech-expert",
+            "name": "Technology Expert",
+            "description": "Specialized in digital transformation and its societal impacts"
+        }
+    ]"""
+    
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": system_prompt + "\n" + example_format},
+                {"role": "user", "content": f"Generate 4 relevant personas for this debate question: {question}"}
+            ],
+            temperature=0.7,
+            max_tokens=500
+        )
+        
+        # Parse the response and update PERSONAS
+        import json
+        generated_personas = json.loads(response.choices[0].message.content)
+        
+        # Clear existing personas and add new ones
+        PERSONAS.clear()
+        # Add the "All" persona first
+        PERSONAS.append({
+            "id": "all",
+            "name": "All",
+            "description": "Get responses from all personas"
+        })
+        # Add the generated personas
+        PERSONAS.extend(generated_personas)
+        
+        return PERSONAS
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to generate personas: {str(e)}")
 
 class DebateMessage(BaseModel):
     persona: str
@@ -63,10 +82,13 @@ async def check_api_key():
     """Debug endpoint to check if API key is set"""
     return {"api_key_set": bool(client.api_key)}
 
-@app.get("/personas")
-async def get_personas() -> List[dict]:
-    """Return list of available personas"""
-    return PERSONAS
+class QuestionPayload(BaseModel):
+    question: str
+
+@app.post("/personas")
+async def get_personas(payload: QuestionPayload) -> List[dict]:
+    """Generate and return list of personas relevant to the question"""
+    return await generate_personas(payload.question)
 
 @app.post("/ask_debate")
 async def ask_debate(payload: DebatePayload):

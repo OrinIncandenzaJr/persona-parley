@@ -9,19 +9,28 @@ function App() {
   const [selectedPersona, setSelectedPersona] = useState('all');
   const [personas, setPersonas] = useState([]);
 
-  useEffect(() => {
-    const fetchPersonas = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:8000/personas');
-        const data = await response.json();
-        setPersonas(data);
-      } catch (error) {
-        console.error('Error fetching personas:', error);
-      }
-    };
+  const generatePersonas = async (question) => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/personas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ question }),
+      });
+      const data = await response.json();
+      setPersonas(data);
+      setSelectedPersona('all'); // Reset to "All" when new personas are generated
+    } catch (error) {
+      console.error('Error generating personas:', error);
+    }
+  };
 
-    fetchPersonas();
-  }, []);
+  // Function to handle initial question submission
+  const handleInitialQuestion = async (question) => {
+    await generatePersonas(question);
+    setMessages([{ persona: "Moderator", content: question }]);
+  };
 
   const handleMessageSubmit = async (message) => {
     try {
@@ -80,14 +89,25 @@ function App() {
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-3xl mx-auto space-y-6">
         <h1 className="text-3xl font-bold text-center mb-8">PersonaParley</h1>
-        <PersonaSelector 
-          onPersonaSelect={setSelectedPersona}
-          selectedPersona={selectedPersona}
-        />
-        <DebatePanel messages={messages} />
-        <InputArea 
-          onSubmit={handleMessageSubmit}
-          selectedPersona={selectedPersona} 
+        {messages.length === 0 ? (
+          <InputArea 
+            onSubmit={handleInitialQuestion}
+            selectedPersona={selectedPersona}
+            isInitialQuestion={true}
+          />
+        ) : (
+          <>
+            <PersonaSelector 
+              onPersonaSelect={setSelectedPersona}
+              selectedPersona={selectedPersona}
+            />
+            <DebatePanel messages={messages} />
+            <InputArea 
+              onSubmit={handleMessageSubmit}
+              selectedPersona={selectedPersona}
+              isInitialQuestion={false}
+            />
+          </>
         />
       </div>
     </div>
