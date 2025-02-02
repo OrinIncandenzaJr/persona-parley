@@ -105,7 +105,7 @@ async def ask_debate(payload: DebatePayload):
 
         # Call OpenAI API
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4",
             messages=messages,
             temperature=0.7,
             max_tokens=500
