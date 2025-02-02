@@ -26,8 +26,26 @@ PERSONAS = []
 async def generate_personas(question: str):
     """Generate relevant personas for a given debate question"""
     system_prompt = """Given the debate question, generate 4 distinct and relevant personas that would provide valuable perspectives.
-    Return the response in a JSON array format with exactly 4 personas, each having 'id', 'name', and 'description' fields.
-    Make the IDs lowercase and hyphenated. Keep descriptions concise but informative."""
+    You must return a valid JSON array containing exactly 4 objects. Each object must have these fields:
+    - 'id': lowercase hyphenated string (e.g., 'tech-expert')
+    - 'name': display name string
+    - 'description': brief description string
+    
+    Example format:
+    [
+        {
+            "id": "tech-expert",
+            "name": "Technology Expert",
+            "description": "Specialized in digital transformation and its societal impacts"
+        },
+        {
+            "id": "ethics-prof",
+            "name": "Ethics Professor",
+            "description": "Expert in moral philosophy and societal implications"
+        }
+    ]
+    
+    Return ONLY the JSON array, no other text or explanation."""
     
     example_format = """Example format:
     [
@@ -49,22 +67,36 @@ async def generate_personas(question: str):
             max_tokens=500
         )
         
-        # Parse the response and update PERSONAS
-        import json
-        generated_personas = json.loads(response.choices[0].message.content)
-        
-        # Clear existing personas and add new ones
-        PERSONAS.clear()
-        # Add the "All" persona first
-        PERSONAS.append({
-            "id": "all",
-            "name": "All",
-            "description": "Get responses from all personas"
-        })
-        # Add the generated personas
-        PERSONAS.extend(generated_personas)
-        
-        return PERSONAS
+        try:
+            # Parse the response and update PERSONAS
+            import json
+            generated_personas = json.loads(response.choices[0].message.content)
+            
+            # Ensure generated_personas is a list
+            if not isinstance(generated_personas, list):
+                raise ValueError("Generated personas must be an array")
+            
+            # Validate each persona has required fields
+            for persona in generated_personas:
+                if not all(key in persona for key in ['id', 'name', 'description']):
+                    raise ValueError("Each persona must have id, name, and description")
+            
+            # Clear existing personas and add new ones
+            PERSONAS.clear()
+            # Add the "All" persona first
+            PERSONAS.append({
+                "id": "all",
+                "name": "All",
+                "description": "Get responses from all personas"
+            })
+            # Add the generated personas
+            PERSONAS.extend(generated_personas)
+            
+            return PERSONAS
+        except json.JSONDecodeError as e:
+            raise HTTPException(status_code=500, detail=f"Invalid JSON from AI response: {str(e)}")
+        except ValueError as e:
+            raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to generate personas: {str(e)}")
 
