@@ -6,7 +6,7 @@ import './App.css';
 
 function App() {
   const [messages, setMessages] = useState([]);
-  const [selectedPersona, setSelectedPersona] = useState('');
+  const [selectedPersona, setSelectedPersona] = useState('all');
   const [personas, setPersonas] = useState([]);
 
   useEffect(() => {

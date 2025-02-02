@@ -16,7 +16,7 @@ function InputArea({ onSubmit, selectedPersona }) {
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
         className="flex-grow p-2 border border-gray-300 rounded-lg"
-        placeholder={inputText.trim() ? `Type message as Moderator...` : `${selectedPersona ? 'Press Submit to let selected persona respond' : 'Select a persona first'}`}
+        placeholder={inputText.trim() ? `Type message as Moderator...` : `${selectedPersona === 'all' ? 'Press Submit to get responses from all personas' : selectedPersona ? 'Press Submit to let selected persona respond' : 'Select a persona first'}`}
         disabled={!selectedPersona}
       />
       <button

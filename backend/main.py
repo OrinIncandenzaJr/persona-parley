@@ -23,6 +23,11 @@ app.add_middleware(
 # Predefined personas
 PERSONAS = [
     {
+        "id": "all",
+        "name": "All",
+        "description": "Get responses from all personas"
+    },
+    {
         "id": "blue-collar",
         "name": "Blue Collar Worker",
         "description": "Practical, hands-on perspective focused on labor, wages, and working conditions"
@@ -65,12 +70,62 @@ async def get_personas() -> List[dict]:
 
 @app.post("/ask_debate")
 async def ask_debate(payload: DebatePayload):
-    # Validate persona exists
-    speaker = next((p for p in PERSONAS if p["id"] == payload.speaker_id), None)
-    if not speaker:
-        raise HTTPException(status_code=400, detail="Invalid persona ID")
-    
     try:
+        if payload.speaker_id == "all":
+            # Handle all personas case
+            all_responses = []
+            for persona in [p for p in PERSONAS if p["id"] != "all"]:
+                messages = []
+                
+                if not payload.conversation_history:
+                    initial_system_message = f"""You are participating in a moderated debate. You will ONLY ever speak as your assigned role.
+                    
+                    Available personas (for context only):
+                    """ + "\n".join([f"- {p['name']}: {p['description']}" for p in PERSONAS if p["id"] != "all"]) + """
+                    
+                    CRITICAL RULES:
+                    1. NEVER impersonate or speak as if you were another persona
+                    2. NEVER start your response with another persona's name
+                    3. ALWAYS begin with your own direct analysis
+                    4. Speak in first person from your perspective
+                    5. You may reference previous points, but only after your own analysis
+                    6. Stay focused on your specific domain expertise
+                    7. Address your responses to the topic, not to other personas"""
+                    
+                    messages.append({"role": "system", "content": initial_system_message})
+                else:
+                    messages.append({"role": "system", "content": f"You are {persona['name']}. IMPORTANT: Only speak as yourself, never impersonate others. Your expertise: {persona['description']}. Begin with 'As a {persona['name']}' or 'From my perspective' and provide your direct analysis."})
+                
+                for msg in payload.conversation_history:
+                    role = "assistant" if msg.persona != "Moderator" else "user"
+                    messages.append({"role": role, "content": f"{msg.persona}: {msg.content}"})
+                
+                messages.append({"role": "user", "content": payload.new_message})
+                
+                response = client.chat.completions.create(
+                    model="gpt-4",
+                    messages=messages,
+                    temperature=0.7,
+                    max_tokens=1000
+                )
+                
+                all_responses.append({
+                    "response": f"### {persona['name']}\n\n{response.choices[0].message.content if response.choices else 'No response generated'}\n\n",
+                    "persona": persona
+                })
+            
+            # Combine all responses with proper formatting
+            combined_response = {
+                "response": "".join(r["response"] for r in all_responses),
+                "persona": {"id": "all", "name": "All", "description": "Combined response from all personas"}
+            }
+            return combined_response
+            
+        # Handle single persona case
+        speaker = next((p for p in PERSONAS if p["id"] == payload.speaker_id), None)
+        if not speaker:
+            raise HTTPException(status_code=400, detail="Invalid persona ID")
+        
         # Prepare messages array
         messages = []
         
@@ -108,7 +163,7 @@ async def ask_debate(payload: DebatePayload):
             model="gpt-4",
             messages=messages,
             temperature=0.7,
-            max_tokens=500
+            max_tokens=1000
         )
 
         return {
