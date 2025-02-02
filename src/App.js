@@ -38,10 +38,23 @@ function App() {
       // Add user's message if one was provided
       const newMessages = [...messages];
       if (message.trim()) {
-        newMessages.push({ persona: "Moderator", content: message });
+        newMessages.push({ persona: "Moderator", content: message.trim() });
       }
-      // Add AI response
-      newMessages.push({ persona: data.persona.name, content: data.response });
+      
+      // Clean up AI response - remove any persona prefixes
+      let cleanResponse = data.response;
+      const personaNames = PERSONAS.map(p => p.name);
+      personaNames.forEach(name => {
+        // Remove "name:" prefix if it exists
+        const prefix = new RegExp(`^${name}:\\s*`, 'i');
+        cleanResponse = cleanResponse.replace(prefix, '');
+        // Remove "As a name," prefix if it exists
+        const asPrefix = new RegExp(`^As\\s+a\\s+${name},\\s*`, 'i');
+        cleanResponse = cleanResponse.replace(asPrefix, '');
+      });
+      
+      // Add cleaned AI response
+      newMessages.push({ persona: data.persona.name, content: cleanResponse.trim() });
       setMessages(newMessages);
     } catch (error) {
       console.error('Error submitting question:', error);
