@@ -81,16 +81,18 @@ async def ask_debate(payload: DebatePayload):
             """ + "\n".join([f"- {p['name']}: {p['description']}" for p in PERSONAS]) + """
 
             Debate Rules:
-            1. Stay true to your assigned perspective
-            2. Only respond to the Moderator or personas who have already spoken
-            3. Do not reference personas who haven't participated yet
-            4. Be concise but thorough
-            5. Engage meaningfully with previous arguments"""
+            1. Stay true to your assigned perspective and expertise
+            2. Always provide your own direct analysis or opinion first
+            3. Only respond to the Moderator or personas who have already spoken
+            4. Do not reference personas who haven't participated yet
+            5. Be concise but thorough
+            6. You may acknowledge others' points after giving your own view
+            7. Never defer to other personas who haven't spoken yet"""
             
             messages.append({"role": "system", "content": initial_system_message})
         else:
             # For subsequent messages, just identify the current speaker
-            messages.append({"role": "system", "content": f"You are {speaker['name']}. Respond based on your perspective."})
+            messages.append({"role": "system", "content": f"You are {speaker['name']}. Provide your direct analysis based on your expertise as {speaker['description']}. Always give your own perspective first before addressing others' points."})
         
         # Add conversation history
         for msg in payload.conversation_history:
