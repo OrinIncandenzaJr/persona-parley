@@ -10,6 +10,11 @@ function App() {
 
   const handleQuestionSubmit = async (question) => {
     try {
+      console.log('Submitting with:', { 
+        question: question,
+        persona_id: selectedPersona 
+      });
+      
       const response = await fetch('http://127.0.0.1:8000/ask_debate', {
         method: 'POST',
         headers: {
@@ -21,7 +26,14 @@ function App() {
         }),
       });
       
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Server error:', errorData);
+        throw new Error(`Server error: ${JSON.stringify(errorData)}`);
+      }
+      
       const data = await response.json();
+      console.log('Response received:', data);
       
       setMessages(prevMessages => [
         ...prevMessages,

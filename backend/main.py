@@ -48,6 +48,11 @@ class Question(BaseModel):
     question: str
     persona_id: str = Field(..., description="ID of the persona to respond")
 
+@app.get("/check_api_key")
+async def check_api_key():
+    """Debug endpoint to check if API key is set"""
+    return {"api_key_set": bool(openai.api_key)}
+
 @app.get("/personas")
 async def get_personas() -> List[dict]:
     """Return list of available personas"""
