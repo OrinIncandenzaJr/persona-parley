@@ -2,14 +2,14 @@ from fastapi import FastAPI, Request, HTTPException
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from fastapi.middleware.cors import CORSMiddleware
-import openai
+from openai import OpenAI
 import os
 
 app = FastAPI()
 
 # Configure OpenAI
-openai.api_key = os.getenv('OPENAI_API_KEY')
-if not openai.api_key:
+client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+if not client.api_key:
     raise ValueError("OPENAI_API_KEY environment variable is not set")
 
 app.add_middleware(
@@ -75,7 +75,7 @@ async def ask_debate(question: Question):
         Respond to questions maintaining this viewpoint consistently."""
 
         # Call OpenAI API
-        response = await openai.ChatCompletion.acreate(
+        response = await client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": system_message},
@@ -86,7 +86,7 @@ async def ask_debate(question: Question):
         )
 
         return {
-            "response": response.choices[0].message.content,
+            "response": response.choices[0].message.content if response.choices else "No response generated",
             "persona": persona
         }
     except Exception as e:
