@@ -108,7 +108,7 @@ function App() {
               isInitialQuestion={false}
             />
           </>
-        />
+        )}
       </div>
     </div>
   );
