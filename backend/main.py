@@ -2,8 +2,15 @@ from fastapi import FastAPI, Request, HTTPException
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from fastapi.middleware.cors import CORSMiddleware
+import openai
+import os
 
 app = FastAPI()
+
+# Configure OpenAI
+openai.api_key = os.getenv('OPENAI_API_KEY')
+if not openai.api_key:
+    raise ValueError("OPENAI_API_KEY environment variable is not set")
 
 app.add_middleware(
     CORSMiddleware,
@@ -56,8 +63,26 @@ async def ask_debate(question: Question):
     if not persona:
         raise HTTPException(status_code=400, detail="Invalid persona ID")
     
-    # TODO: Process user_input or pass it to LLM with persona context
-    return {
-        "response": f"As a {persona['name']}, I would say: {question.question}",
-        "persona": persona
-    }
+    try:
+        # Create system message with persona context
+        system_message = f"""You are a {persona['name']}. 
+        Your perspective: {persona['description']}
+        Respond to questions maintaining this viewpoint consistently."""
+
+        # Call OpenAI API
+        response = await openai.ChatCompletion.acreate(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": question.question}
+            ],
+            temperature=0.7,
+            max_tokens=500
+        )
+
+        return {
+            "response": response.choices[0].message.content,
+            "persona": persona
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
