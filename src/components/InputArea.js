@@ -5,10 +5,8 @@ function InputArea({ onSubmit, selectedPersona }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (inputText.trim()) {
-      onSubmit(inputText);
-      setInputText('');
-    }
+    onSubmit(inputText);
+    setInputText('');
   };
 
   return (
@@ -18,7 +16,7 @@ function InputArea({ onSubmit, selectedPersona }) {
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
         className="flex-grow p-2 border border-gray-300 rounded-lg"
-        placeholder={`Type message for ${selectedPersona || 'selected persona'}...`}
+        placeholder={inputText.trim() ? `Type message as Moderator...` : `${selectedPersona ? 'Press Submit to let selected persona respond' : 'Select a persona first'}`}
         disabled={!selectedPersona}
       />
       <button

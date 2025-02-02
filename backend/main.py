@@ -65,9 +65,6 @@ async def get_personas() -> List[dict]:
 
 @app.post("/ask_debate")
 async def ask_debate(payload: DebatePayload):
-    if not payload.new_message.strip():
-        raise HTTPException(status_code=400, detail="Message cannot be empty")
-    
     # Validate persona exists
     speaker = next((p for p in PERSONAS if p["id"] == payload.speaker_id), None)
     if not speaker:

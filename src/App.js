@@ -35,10 +35,14 @@ function App() {
       const data = await response.json();
       console.log('Response received:', data);
       
-      setMessages(prevMessages => [
-        ...prevMessages,
-        { persona: data.persona.name, content: data.response }
-      ]);
+      // Add user's message if one was provided
+      const newMessages = [...messages];
+      if (message.trim()) {
+        newMessages.push({ persona: "Moderator", content: message });
+      }
+      // Add AI response
+      newMessages.push({ persona: data.persona.name, content: data.response });
+      setMessages(newMessages);
     } catch (error) {
       console.error('Error submitting question:', error);
     }
