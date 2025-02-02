@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import InputArea from './components/InputArea';
 import DebatePanel from './components/DebatePanel';
+import PersonaSelector from './components/PersonaSelector';
 import './App.css';
 
 function App() {
   const [messages, setMessages] = useState([]);
+  const [selectedPersona, setSelectedPersona] = useState('');
 
   const handleQuestionSubmit = async (question) => {
     try {
@@ -13,7 +15,10 @@ function App() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({ 
+          question: question,
+          persona_id: selectedPersona 
+        }),
       });
       
       const data = await response.json();
@@ -32,6 +37,10 @@ function App() {
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-3xl mx-auto space-y-6">
         <h1 className="text-3xl font-bold text-center mb-8">PersonaParley</h1>
+        <PersonaSelector 
+          onPersonaSelect={setSelectedPersona}
+          selectedPersona={selectedPersona}
+        />
         <DebatePanel messages={messages} />
         <InputArea onSubmit={handleQuestionSubmit} />
       </div>
