@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import InputArea from './components/InputArea';
 import DebatePanel from './components/DebatePanel';
 import PersonaSelector from './components/PersonaSelector';
@@ -7,6 +7,21 @@ import './App.css';
 function App() {
   const [messages, setMessages] = useState([]);
   const [selectedPersona, setSelectedPersona] = useState('');
+  const [personas, setPersonas] = useState([]);
+
+  useEffect(() => {
+    const fetchPersonas = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/personas');
+        const data = await response.json();
+        setPersonas(data);
+      } catch (error) {
+        console.error('Error fetching personas:', error);
+      }
+    };
+
+    fetchPersonas();
+  }, []);
 
   const handleMessageSubmit = async (message) => {
     try {
@@ -43,7 +58,7 @@ function App() {
       
       // Clean up AI response - remove any persona prefixes
       let cleanResponse = data.response;
-      const personaNames = PERSONAS.map(p => p.name);
+      const personaNames = personas.map(p => p.name);
       personaNames.forEach(name => {
         // Remove "name:" prefix if it exists
         const prefix = new RegExp(`^${name}:\\s*`, 'i');
