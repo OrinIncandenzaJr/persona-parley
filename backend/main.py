@@ -71,21 +71,30 @@ async def ask_debate(payload: DebatePayload):
         raise HTTPException(status_code=400, detail="Invalid persona ID")
     
     try:
-        # Create system message with debate context
-        system_message = f"""You are a {speaker['name']} participating in a multi-persona debate.
-        Your perspective: {speaker['description']}
-        You are aware this is a debate with multiple viewpoints. Stay true to your perspective while
-        engaging meaningfully with others' arguments. Be concise but thorough.
+        # Prepare messages array
+        messages = []
         
-        Important: Only respond to messages from the Moderator or personas who have already spoken in the conversation.
-        Do not reference or respond to personas who haven't participated yet."""
+        if not payload.conversation_history:
+            # If this is the first message, set up the full debate context
+            initial_system_message = """Welcome to the moderated debate. Here are all participants:
 
-        # Convert conversation history to OpenAI message format
-        messages = [{"role": "system", "content": system_message}]
+            """ + "\n".join([f"- {p['name']}: {p['description']}" for p in PERSONAS]) + """
+
+            Debate Rules:
+            1. Stay true to your assigned perspective
+            2. Only respond to the Moderator or personas who have already spoken
+            3. Do not reference personas who haven't participated yet
+            4. Be concise but thorough
+            5. Engage meaningfully with previous arguments"""
+            
+            messages.append({"role": "system", "content": initial_system_message})
+        else:
+            # For subsequent messages, just identify the current speaker
+            messages.append({"role": "system", "content": f"You are {speaker['name']}. Respond based on your perspective."})
         
         # Add conversation history
         for msg in payload.conversation_history:
-            role = "assistant" if msg.persona != "User" else "user"
+            role = "assistant" if msg.persona != "Moderator" else "user"
             messages.append({"role": role, "content": f"{msg.persona}: {msg.content}"})
         
         # Add the new message
