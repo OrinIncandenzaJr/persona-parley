@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function InputArea({ onSubmit }) {
+function InputArea({ onSubmit, selectedPersona }) {
   const [inputText, setInputText] = useState('');
 
   const handleSubmit = (e) => {
@@ -18,7 +18,8 @@ function InputArea({ onSubmit }) {
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
         className="flex-grow p-2 border border-gray-300 rounded-lg"
-        placeholder="Type your question here..."
+        placeholder={`Type message for ${selectedPersona || 'selected persona'}...`}
+        disabled={!selectedPersona}
       />
       <button
         type="submit"

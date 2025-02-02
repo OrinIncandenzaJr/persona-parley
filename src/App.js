@@ -8,22 +8,22 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [selectedPersona, setSelectedPersona] = useState('');
 
-  const handleQuestionSubmit = async (question) => {
+  const handleMessageSubmit = async (message) => {
     try {
-      console.log('Submitting with:', { 
-        question: question,
-        persona_id: selectedPersona 
-      });
+      const payload = {
+        new_message: message,
+        speaker_id: selectedPersona,
+        conversation_history: messages
+      };
+      
+      console.log('Submitting:', payload);
       
       const response = await fetch('http://127.0.0.1:8000/ask_debate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          question: question,
-          persona_id: selectedPersona 
-        }),
+        body: JSON.stringify(payload),
       });
       
       if (!response.ok) {
@@ -37,8 +37,7 @@ function App() {
       
       setMessages(prevMessages => [
         ...prevMessages,
-        { persona: 'User', content: question },
-        { persona: 'AI', content: data.response }
+        { persona: data.persona.name, content: data.response }
       ]);
     } catch (error) {
       console.error('Error submitting question:', error);
@@ -54,7 +53,10 @@ function App() {
           selectedPersona={selectedPersona}
         />
         <DebatePanel messages={messages} />
-        <InputArea onSubmit={handleQuestionSubmit} />
+        <InputArea 
+          onSubmit={handleMessageSubmit}
+          selectedPersona={selectedPersona} 
+        />
       </div>
     </div>
   );

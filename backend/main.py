@@ -44,9 +44,14 @@ PERSONAS = [
     }
 ]
 
-class Question(BaseModel):
-    question: str
-    persona_id: str = Field(..., description="ID of the persona to respond")
+class DebateMessage(BaseModel):
+    persona: str
+    content: str
+
+class DebatePayload(BaseModel):
+    new_message: str
+    speaker_id: str = Field(..., description="ID of the persona to speak next")
+    conversation_history: List[DebateMessage]
 
 @app.get("/check_api_key")
 async def check_api_key():
@@ -59,35 +64,44 @@ async def get_personas() -> List[dict]:
     return PERSONAS
 
 @app.post("/ask_debate")
-async def ask_debate(question: Question):
-    if not question.question.strip():
-        raise HTTPException(status_code=400, detail="Question cannot be empty")
+async def ask_debate(payload: DebatePayload):
+    if not payload.new_message.strip():
+        raise HTTPException(status_code=400, detail="Message cannot be empty")
     
     # Validate persona exists
-    persona = next((p for p in PERSONAS if p["id"] == question.persona_id), None)
-    if not persona:
+    speaker = next((p for p in PERSONAS if p["id"] == payload.speaker_id), None)
+    if not speaker:
         raise HTTPException(status_code=400, detail="Invalid persona ID")
     
     try:
-        # Create system message with persona context
-        system_message = f"""You are a {persona['name']}. 
-        Your perspective: {persona['description']}
-        Respond to questions maintaining this viewpoint consistently."""
+        # Create system message with debate context
+        system_message = f"""You are a {speaker['name']} participating in a multi-persona debate.
+        Your perspective: {speaker['description']}
+        You are aware this is a debate with multiple viewpoints. Stay true to your perspective while
+        engaging meaningfully with others' arguments. Be concise but thorough."""
+
+        # Convert conversation history to OpenAI message format
+        messages = [{"role": "system", "content": system_message}]
+        
+        # Add conversation history
+        for msg in payload.conversation_history:
+            role = "assistant" if msg.persona != "User" else "user"
+            messages.append({"role": role, "content": f"{msg.persona}: {msg.content}"})
+        
+        # Add the new message
+        messages.append({"role": "user", "content": payload.new_message})
 
         # Call OpenAI API
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": system_message},
-                {"role": "user", "content": question.question}
-            ],
+            messages=messages,
             temperature=0.7,
             max_tokens=500
         )
 
         return {
             "response": response.choices[0].message.content if response.choices else "No response generated",
-            "persona": persona
+            "persona": speaker
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
