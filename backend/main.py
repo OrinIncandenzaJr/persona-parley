@@ -75,7 +75,7 @@ async def ask_debate(question: Question):
         Respond to questions maintaining this viewpoint consistently."""
 
         # Call OpenAI API
-        response = await client.chat.completions.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": system_message},
