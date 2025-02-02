@@ -51,7 +51,7 @@ class Question(BaseModel):
 @app.get("/check_api_key")
 async def check_api_key():
     """Debug endpoint to check if API key is set"""
-    return {"api_key_set": bool(openai.api_key)}
+    return {"api_key_set": bool(client.api_key)}
 
 @app.get("/personas")
 async def get_personas() -> List[dict]:
