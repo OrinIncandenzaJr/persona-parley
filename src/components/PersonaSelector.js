@@ -3,8 +3,9 @@ import React from 'react';
 function PersonaSelector({ onPersonaSelect, selectedPersona, personas = [] }) {
 
   return (
-    <div className="mb-6">
-      <div className="flex flex-wrap gap-2 justify-center">
+    <div>
+      <h2 className="text-lg font-semibold mb-4">Personas</h2>
+      <div className="flex flex-col gap-2">
         {personas.map((persona) => (
           <button
             key={persona.id}
