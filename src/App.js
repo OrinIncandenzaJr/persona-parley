@@ -135,7 +135,7 @@ function App() {
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4 sm:p-8">
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">PersonaParley</h1>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">Persona Parley</h1>
           <p className="text-gray-600">Multi-perspective AI Debate Platform</p>
         </div>
         {messages.length === 0 ? (
