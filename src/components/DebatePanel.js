@@ -14,7 +14,6 @@ function DebatePanel({ messages }) {
           </div>
         ))}
       </div>
-      ))}
     </div>
   );
 }
