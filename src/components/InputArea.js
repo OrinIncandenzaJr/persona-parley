@@ -10,9 +10,10 @@ function InputArea({ onSubmit, selectedPersona, isInitialQuestion }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-center space-x-2 p-4">
+    <form onSubmit={handleSubmit} className="flex items-center space-x-2 p-4 w-full">
       <input
         type="text"
+        style={{ minHeight: '60px' }}
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
         className="flex-grow p-2 border border-gray-300 rounded-lg"
