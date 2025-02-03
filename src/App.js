@@ -146,7 +146,7 @@ function App() {
           />
         ) : (
           <div className="flex gap-8">
-            <div className="w-72">
+            <div className="w-80 flex-shrink-0">
               <PersonaSelector 
                 onPersonaSelect={setSelectedPersona}
                 selectedPersona={selectedPersona}
@@ -156,9 +156,9 @@ function App() {
             <div className="flex-1 space-y-6">
               <DebatePanel messages={messages} />
               <InputArea 
-              onSubmit={handleMessageSubmit}
-              selectedPersona={selectedPersona}
-              isInitialQuestion={false}
+                onSubmit={handleMessageSubmit}
+                selectedPersona={selectedPersona}
+                isInitialQuestion={false}
               />
             </div>
           </div>
