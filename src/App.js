@@ -79,55 +79,65 @@ function App() {
   };
 
   const handleMessageSubmit = async (message) => {
-    try {
-      const payload = {
-        new_message: message,
-        speaker_id: selectedPersona,
-        conversation_history: messages
-      };
-      
-      console.log('Submitting:', payload);
-      
-      const response = await fetch('http://127.0.0.1:8000/ask_debate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Server error:', errorData);
-        throw new Error(`Server error: ${JSON.stringify(errorData)}`);
+    if (message.trim().toLowerCase() === "test") {
+      const mockMessages = [
+        { persona: "Moderator", content: "This is a test message from the moderator." },
+        { persona: "Persona 1", content: "This is a test response from Persona 1." },
+        { persona: "Persona 2", content: "This is a test response from Persona 2." },
+        { persona: "Persona 3", content: "This is a test response from Persona 3." }
+      ];
+      setMessages(mockMessages);
+    } else {
+      try {
+        const payload = {
+          new_message: message,
+          speaker_id: selectedPersona,
+          conversation_history: messages
+        };
+        
+        console.log('Submitting:', payload);
+        
+        const response = await fetch('http://127.0.0.1:8000/ask_debate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('Server error:', errorData);
+          throw new Error(`Server error: ${JSON.stringify(errorData)}`);
+        }
+        
+        const data = await response.json();
+        console.log('Response received:', data);
+        
+        // Add user's message if one was provided
+        const newMessages = [...messages];
+        if (message.trim()) {
+          newMessages.push({ persona: "Moderator", content: message.trim() });
+        }
+        
+        // Clean up AI response - remove any persona prefixes
+        let cleanResponse = data.response;
+        const personaNames = personas.map(p => p.name);
+        personaNames.forEach(name => {
+          // Remove "name:" prefix if it exists
+          const prefix = new RegExp(`^${name}:\\s*`, 'i');
+          cleanResponse = cleanResponse.replace(prefix, '');
+          // Remove "As a name," prefix if it exists
+          const asPrefix = new RegExp(`^As\\s+a\\s+${name},\\s*`, 'i');
+          cleanResponse = cleanResponse.replace(asPrefix, '');
+        });
+        
+        // Add cleaned AI response
+        newMessages.push({ persona: data.persona.name, content: cleanResponse.trim() });
+        setMessages(newMessages);
+      } catch (error) {
+        console.error('Error submitting question:', error);
       }
-      
-      const data = await response.json();
-      console.log('Response received:', data);
-      
-      // Add user's message if one was provided
-      const newMessages = [...messages];
-      if (message.trim()) {
-        newMessages.push({ persona: "Moderator", content: message.trim() });
-      }
-      
-      // Clean up AI response - remove any persona prefixes
-      let cleanResponse = data.response;
-      const personaNames = personas.map(p => p.name);
-      personaNames.forEach(name => {
-        // Remove "name:" prefix if it exists
-        const prefix = new RegExp(`^${name}:\\s*`, 'i');
-        cleanResponse = cleanResponse.replace(prefix, '');
-        // Remove "As a name," prefix if it exists
-        const asPrefix = new RegExp(`^As\\s+a\\s+${name},\\s*`, 'i');
-        cleanResponse = cleanResponse.replace(asPrefix, '');
-      });
-      
-      // Add cleaned AI response
-      newMessages.push({ persona: data.persona.name, content: cleanResponse.trim() });
-      setMessages(newMessages);
-    } catch (error) {
-      console.error('Error submitting question:', error);
     }
   };
 
