@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 
 function DebatePanel({ messages }) {
   return (
-    <div className="max-h-[60vh] overflow-y-auto p-4 border border-gray-300 rounded-lg bg-white shadow-md w-full max-w-3xl mx-auto">
+    <div className="max-h-[60vh] overflow-y-auto p-4 border border-gray-300 rounded-lg bg-white shadow-md">
       <div className="prose prose-sm">
         {messages.map((message, index) => (
           <div key={index} className="mb-4">
