@@ -132,9 +132,12 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-3xl mx-auto space-y-6">
-        <h1 className="text-3xl font-bold text-center mb-8">PersonaParley</h1>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4 sm:p-8">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">PersonaParley</h1>
+          <p className="text-gray-600">Multi-perspective AI Debate Platform</p>
+        </div>
         {messages.length === 0 ? (
           <InputArea 
             onSubmit={handleInitialQuestion}
