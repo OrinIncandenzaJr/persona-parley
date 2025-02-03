@@ -21,15 +21,61 @@ function App() {
       const data = await response.json();
       setPersonas(data);
       setSelectedPersona('all'); // Reset to "All" when new personas are generated
+      return data;
     } catch (error) {
       console.error('Error generating personas:', error);
+      return null;
     }
   };
 
   // Function to handle initial question submission
   const handleInitialQuestion = async (question) => {
-    await generatePersonas(question);
-    setMessages([{ persona: "Moderator", content: question }]);
+    const personas = await generatePersonas(question);
+    if (personas) {
+      const initialMessages = [{ persona: "Moderator", content: question }];
+      setMessages(initialMessages);
+      
+      // Automatically get responses from all personas
+      const payload = {
+        new_message: question,
+        speaker_id: 'all',
+        conversation_history: initialMessages
+      };
+      
+      try {
+        const response = await fetch('http://127.0.0.1:8000/ask_debate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to get initial responses');
+        }
+        
+        const data = await response.json();
+        const newMessages = [...initialMessages];
+        
+        // Split the combined response by persona sections
+        const responses = data.response.split('### ').filter(Boolean);
+        responses.forEach(response => {
+          const [personaName, ...contentParts] = response.split('\n\n');
+          const content = contentParts.join('\n\n').trim();
+          if (personaName && content) {
+            newMessages.push({
+              persona: personaName.trim(),
+              content: content
+            });
+          }
+        });
+        
+        setMessages(newMessages);
+      } catch (error) {
+        console.error('Error getting initial responses:', error);
+      }
+    }
   };
 
   const handleMessageSubmit = async (message) => {
