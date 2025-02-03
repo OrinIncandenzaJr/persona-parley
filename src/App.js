@@ -146,7 +146,7 @@ function App() {
           />
         ) : (
           <div className="flex gap-8">
-            <div className="w-80 flex-shrink-0">
+            <div className="w-96 flex-shrink-0">
               <PersonaSelector 
                 onPersonaSelect={setSelectedPersona}
                 selectedPersona={selectedPersona}

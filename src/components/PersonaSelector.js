@@ -10,7 +10,7 @@ function PersonaSelector({ onPersonaSelect, selectedPersona, personas = [] }) {
           <button
             key={persona.id}
             onClick={() => onPersonaSelect(persona.id)}
-            className={`px-8 py-6 text-xl font-medium rounded-lg transition-all duration-200 ${
+            className={`px-10 py-8 text-2xl font-medium rounded-lg transition-all duration-200 ${
               selectedPersona === persona.id
                 ? 'bg-blue-600 text-white shadow-lg scale-102'
                 : 'bg-white text-gray-700 hover:bg-blue-50 border-2 border-gray-300 hover:border-blue-300'
