@@ -132,8 +132,8 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4 sm:p-8 flex flex-col items-center">
-      <div className="w-full max-w-2xl space-y-6 flex flex-col items-center mt-20">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4 sm:p-8 flex flex-col items-center justify-center">
+      <div className="w-full max-w-2xl space-y-6 flex flex-col items-center">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">PersonaParley</h1>
           <p className="text-gray-600">Multi-perspective AI Debate Platform</p>
