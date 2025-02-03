@@ -10,7 +10,7 @@ function InputArea({ onSubmit, selectedPersona, isInitialQuestion }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-center space-x-2 p-4 w-full max-w-2xl mx-auto">
+    <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto flex items-center space-x-2 p-4">
       <input
         type="text"
         style={{ minHeight: '60px' }}
