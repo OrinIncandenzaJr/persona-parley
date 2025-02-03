@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import InputArea from './components/InputArea';
 import DebatePanel from './components/DebatePanel';
 import PersonaSelector from './components/PersonaSelector';
