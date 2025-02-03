@@ -30,6 +30,25 @@ function App() {
 
   // Function to handle initial question submission
   const handleInitialQuestion = async (question) => {
+    if (question.trim().toLowerCase() === "test") {
+      const mockPersonas = [
+        { id: "p1", name: "Philosopher" },
+        { id: "p2", name: "Scientist" },
+        { id: "p3", name: "Artist" }
+      ];
+      setPersonas(mockPersonas);
+      
+      const mockMessages = [
+        { persona: "Moderator", content: "Let's discuss the nature of consciousness." },
+        { persona: "Philosopher", content: "Consciousness is fundamentally a question of subjective experience and qualia. We must consider the hard problem of consciousness." },
+        { persona: "Scientist", content: "From a neuroscientific perspective, consciousness emerges from complex neural networks and can be studied through brain activity patterns." },
+        { persona: "Artist", content: "Consciousness is like a canvas where our experiences, dreams, and emotions blend together to create the masterpiece of human experience." }
+      ];
+      setMessages(mockMessages);
+      setSelectedPersona('all');
+      return;
+    }
+
     const personas = await generatePersonas(question);
     if (personas) {
       const initialMessages = [{ persona: "Moderator", content: question }];
@@ -80,24 +99,16 @@ function App() {
 
   const handleMessageSubmit = async (message) => {
     if (message.trim().toLowerCase() === "test") {
-      const mockPersonas = [
-        { id: "p1", name: "Philosopher" },
-        { id: "p2", name: "Scientist" },
-        { id: "p3", name: "Artist" }
-      ];
-      setPersonas(mockPersonas);
-      
-      const mockMessages = [
-        { persona: "Moderator", content: "Let's discuss the nature of consciousness." },
-        { persona: "Philosopher", content: "Consciousness is fundamentally a question of subjective experience and qualia. We must consider the hard problem of consciousness." },
-        { persona: "Scientist", content: "From a neuroscientific perspective, consciousness emerges from complex neural networks and can be studied through brain activity patterns." },
-        { persona: "Artist", content: "Consciousness is like a canvas where our experiences, dreams, and emotions blend together to create the masterpiece of human experience." }
-      ];
-      setMessages(mockMessages);
-      setSelectedPersona('all');
+      const newMessages = [...messages];
+      newMessages.push({ persona: "Moderator", content: message });
+      newMessages.push({ persona: "Philosopher", content: "This is a test response from the Philosopher persona discussing the topic at hand." });
+      newMessages.push({ persona: "Scientist", content: "Here's a scientific perspective on the matter for testing purposes." });
+      newMessages.push({ persona: "Artist", content: "And this is how an artist might interpret this situation creatively." });
+      setMessages(newMessages);
       return;
-    } else {
-      try {
+    }
+    
+    try {
         const payload = {
           new_message: message,
           speaker_id: selectedPersona,
