@@ -86,7 +86,7 @@ function App() {
         { persona: "Persona 2", content: "This is a test response from Persona 2." },
         { persona: "Persona 3", content: "This is a test response from Persona 3." }
       ];
-      setMessages(mockMessages);
+      setMessages([...messages, ...mockMessages]);
     } else {
       try {
         const payload = {
