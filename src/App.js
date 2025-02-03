@@ -161,39 +161,43 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4 sm:p-8">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Persona Parley</h1>
-          <p className="text-gray-600">Multi-perspective AI Debate Platform</p>
-        </div>
-        {messages.length === 0 ? (
-          <InputArea 
-            onSubmit={handleInitialQuestion}
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      <div className="flex">
+        {/* Left Panel for Personas */}
+        <div className="w-96 h-screen p-6 bg-gray-50 border-r border-gray-200">
+          <PersonaSelector 
+            onPersonaSelect={setSelectedPersona}
             selectedPersona={selectedPersona}
-            isInitialQuestion={true}
+            personas={personas}
           />
-        ) : (
-          <div className="flex gap-8">
-            <div className="w-96 flex-shrink-0">
-              <PersonaSelector 
-                onPersonaSelect={setSelectedPersona}
-                selectedPersona={selectedPersona}
-                personas={personas}
-              />
+        </div>
+
+        {/* Main Content Area */}
+        <div className="flex-1 p-4 sm:p-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <h1 className="text-4xl font-bold text-gray-800 mb-2">Persona Parley</h1>
+              <p className="text-gray-600">Multi-perspective AI Debate Platform</p>
             </div>
-            <div className="flex-1 space-y-6">
-              <DebatePanel messages={messages} />
-            </div>
-            <div className="mt-6">
+            
+            {messages.length === 0 ? (
               <InputArea 
-                onSubmit={handleMessageSubmit}
+                onSubmit={handleInitialQuestion}
                 selectedPersona={selectedPersona}
-                isInitialQuestion={false}
+                isInitialQuestion={true}
               />
-            </div>
+            ) : (
+              <div className="space-y-6">
+                <DebatePanel messages={messages} />
+                <InputArea 
+                  onSubmit={handleMessageSubmit}
+                  selectedPersona={selectedPersona}
+                  isInitialQuestion={false}
+                />
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
