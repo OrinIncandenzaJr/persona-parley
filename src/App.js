@@ -80,13 +80,22 @@ function App() {
 
   const handleMessageSubmit = async (message) => {
     if (message.trim().toLowerCase() === "test") {
-      const mockMessages = [
-        { persona: "Moderator", content: "This is a test message from the moderator." },
-        { persona: "Persona 1", content: "This is a test response from Persona 1." },
-        { persona: "Persona 2", content: "This is a test response from Persona 2." },
-        { persona: "Persona 3", content: "This is a test response from Persona 3." }
+      const mockPersonas = [
+        { id: "p1", name: "Philosopher" },
+        { id: "p2", name: "Scientist" },
+        { id: "p3", name: "Artist" }
       ];
-      setMessages([...messages, ...mockMessages]);
+      setPersonas(mockPersonas);
+      
+      const mockMessages = [
+        { persona: "Moderator", content: "Let's discuss the nature of consciousness." },
+        { persona: "Philosopher", content: "Consciousness is fundamentally a question of subjective experience and qualia. We must consider the hard problem of consciousness." },
+        { persona: "Scientist", content: "From a neuroscientific perspective, consciousness emerges from complex neural networks and can be studied through brain activity patterns." },
+        { persona: "Artist", content: "Consciousness is like a canvas where our experiences, dreams, and emotions blend together to create the masterpiece of human experience." }
+      ];
+      setMessages(mockMessages);
+      setSelectedPersona('all');
+      return;
     } else {
       try {
         const payload = {
