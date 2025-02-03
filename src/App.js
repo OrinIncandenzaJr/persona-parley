@@ -155,12 +155,14 @@ function App() {
             </div>
             <div className="flex-1 space-y-6">
               <DebatePanel messages={messages} />
-              <InputArea 
-                onSubmit={handleMessageSubmit}
-                selectedPersona={selectedPersona}
-                isInitialQuestion={false}
-              />
             </div>
+          </div>
+          <div className="mt-6">
+            <InputArea 
+              onSubmit={handleMessageSubmit}
+              selectedPersona={selectedPersona}
+              isInitialQuestion={false}
+            />
           </div>
         )}
       </div>
