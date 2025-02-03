@@ -100,6 +100,7 @@ function App() {
             <PersonaSelector 
               onPersonaSelect={setSelectedPersona}
               selectedPersona={selectedPersona}
+              personas={personas}
             />
             <DebatePanel messages={messages} />
             <InputArea 

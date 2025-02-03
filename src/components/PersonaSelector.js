@@ -1,21 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
-function PersonaSelector({ onPersonaSelect, selectedPersona }) {
-  const [personas, setPersonas] = useState([]);
-
-  useEffect(() => {
-    const fetchPersonas = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:8000/personas');
-        const data = await response.json();
-        setPersonas(data);
-      } catch (error) {
-        console.error('Error fetching personas:', error);
-      }
-    };
-
-    fetchPersonas();
-  }, []);
+function PersonaSelector({ onPersonaSelect, selectedPersona, personas = [] }) {
 
   return (
     <div className="mb-4">
