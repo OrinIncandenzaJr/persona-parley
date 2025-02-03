@@ -158,7 +158,6 @@ function App() {
       } catch (error) {
         console.error('Error submitting question:', error);
       }
-    }
   };
 
   return (
