@@ -5,7 +5,7 @@ function PersonaSelector({ onPersonaSelect, selectedPersona, personas = [] }) {
   return (
     <div>
       <h2 className="text-lg font-semibold mb-4">Personas</h2>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-4 items-stretch">
         {personas.map((persona) => (
           <button
             key={persona.id}
