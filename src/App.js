@@ -133,7 +133,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4 sm:p-8">
-      <div className="max-w-3xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">Persona Parley</h1>
           <p className="text-gray-600">Multi-perspective AI Debate Platform</p>
@@ -145,19 +145,23 @@ function App() {
             isInitialQuestion={true}
           />
         ) : (
-          <>
-            <PersonaSelector 
-              onPersonaSelect={setSelectedPersona}
-              selectedPersona={selectedPersona}
-              personas={personas}
-            />
-            <DebatePanel messages={messages} />
-            <InputArea 
+          <div className="flex gap-8">
+            <div className="w-72">
+              <PersonaSelector 
+                onPersonaSelect={setSelectedPersona}
+                selectedPersona={selectedPersona}
+                personas={personas}
+              />
+            </div>
+            <div className="flex-1 space-y-6">
+              <DebatePanel messages={messages} />
+              <InputArea 
               onSubmit={handleMessageSubmit}
               selectedPersona={selectedPersona}
               isInitialQuestion={false}
-            />
-          </>
+              />
+            </div>
+          </div>
         )}
       </div>
     </div>
