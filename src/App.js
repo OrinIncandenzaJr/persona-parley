@@ -186,10 +186,10 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
       <div className="flex">
         {/* Left Panel for Personas */}
-        <div className="w-96 h-screen p-6 bg-gray-50 border-r border-gray-200">
+        <div className="w-96 h-screen p-6 bg-gray-800 border-r border-gray-700">
           <PersonaSelector 
             onPersonaSelect={setSelectedPersona}
             selectedPersona={selectedPersona}
@@ -201,8 +201,8 @@ function App() {
         <div className="flex-1 p-4 sm:p-8">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold text-gray-800 mb-2">Persona Parley</h1>
-              <p className="text-gray-600">Multi-perspective AI Debate Platform</p>
+              <h1 className="text-4xl font-bold text-white mb-2">Persona Parley</h1>
+              <p className="text-gray-300">Multi-perspective AI Debate Platform</p>
               <button
                 onClick={handleReset}
                 className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"

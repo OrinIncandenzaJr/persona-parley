@@ -13,7 +13,7 @@ function PersonaSelector({ onPersonaSelect, selectedPersona, personas = [] }) {
             className={`px-10 py-8 text-2xl font-medium rounded-lg transition-all duration-200 ${
               selectedPersona === persona.id
                 ? 'bg-blue-600 text-white shadow-lg scale-102'
-                : 'bg-white text-gray-700 hover:bg-blue-50 border-2 border-gray-300 hover:border-blue-300'
+                : 'bg-gray-700 text-gray-100 hover:bg-gray-600 border-2 border-gray-600 hover:border-blue-500'
             }`}
           >
             {persona.name}
@@ -21,7 +21,7 @@ function PersonaSelector({ onPersonaSelect, selectedPersona, personas = [] }) {
         ))}
       </div>
       {selectedPersona && (
-        <div className="mt-3 text-center text-sm text-blue-600 font-medium">
+        <div className="mt-3 text-center text-sm text-blue-400 font-medium">
           Speaking as: {personas.find(p => p.id === selectedPersona)?.name || 'Unknown'}
         </div>
       )}

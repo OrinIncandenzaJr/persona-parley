@@ -16,7 +16,7 @@ function InputArea({ onSubmit, selectedPersona, isInitialQuestion }) {
         style={{ minHeight: '60px' }}
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
-        className="flex-grow p-2 border border-gray-300 rounded-lg shadow-sm bg-white"
+        className="flex-grow p-2 border border-gray-600 rounded-lg shadow-sm bg-gray-700 text-gray-100 placeholder-gray-400"
         placeholder={isInitialQuestion ? 
           "Enter your debate question to generate relevant personas..." : 
           (inputText.trim() ? `Type message as Moderator...` : 

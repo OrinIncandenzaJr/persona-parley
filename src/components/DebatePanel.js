@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 
 function DebatePanel({ messages }) {
   return (
-    <div className="max-h-[60vh] overflow-y-auto p-4 border-2 border-blue-200 rounded-lg bg-gray-50 shadow-lg w-full">
+    <div className="max-h-[60vh] overflow-y-auto p-4 border-2 border-gray-700 rounded-lg bg-gray-800 shadow-lg w-full">
       <div className="flex flex-col space-y-4">
         {messages.map((message, index) => {
           const isModerator = message.persona === 'Moderator';
@@ -17,8 +17,8 @@ function DebatePanel({ messages }) {
             >
               {/* Show avatar for non-moderator messages only when this is the first in a block */}
               {!isModerator && !isConsecutive && (
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-2 mt-2">
-                  <span className="font-bold text-lg text-blue-600">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-900 flex items-center justify-center mr-2 mt-2">
+                  <span className="font-bold text-lg text-blue-300">
                     {message.persona.charAt(0).toUpperCase()}
                   </span>
                 </div>
@@ -26,7 +26,7 @@ function DebatePanel({ messages }) {
               <div className="flex flex-col">
                 {/* Only show the speaker’s name if this is not a consecutive message */}
                 {!isConsecutive && (
-                  <span className={`text-xs ${isModerator ? 'text-right mr-2' : 'ml-2'} text-gray-600 mb-1`}>
+                  <span className={`text-xs ${isModerator ? 'text-right mr-2' : 'ml-2'} text-gray-300 mb-1`}>
                     {message.persona}
                   </span>
                 )}
@@ -34,8 +34,8 @@ function DebatePanel({ messages }) {
                   // Added shadow to all bubbles; for moderator messages, added a border for a distinct look.
                   className={`max-w-[80%] rounded-lg px-4 py-2 shadow ${
                     isModerator
-                      ? 'bg-blue-500 text-white ml-auto border border-blue-600'
-                      : 'bg-white text-gray-800 border border-gray-200'
+                      ? 'bg-blue-600 text-white ml-auto border border-blue-700'
+                      : 'bg-gray-700 text-gray-100 border border-gray-600'
                   } ${isConsecutive ? 'mt-1' : ''}`}
                 >
                   <div className="prose prose-sm max-w-none">
