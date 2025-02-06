@@ -12,23 +12,29 @@ function DebatePanel({ messages }) {
           return (
             <div 
               key={index} 
-              className={`flex ${isModerator ? 'justify-end' : 'justify-start'} ${isConsecutive ? 'mt-1' : 'mt-4'}`}
+              // Apply different justification and a slide-in animation on every message group
+              className={`flex ${isModerator ? 'justify-end' : 'justify-start'} ${isConsecutive ? 'mt-1' : 'mt-4'} animate-slideIn`}
             >
+              {/* Show avatar for non-moderator messages only when this is the first in a block */}
               {!isModerator && !isConsecutive && (
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-2 mt-2">
-                  {message.persona[0]}
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-2 mt-2">
+                  <span className="font-bold text-lg text-blue-600">
+                    {message.persona.charAt(0).toUpperCase()}
+                  </span>
                 </div>
               )}
               <div className="flex flex-col">
+                {/* Only show the speaker’s name if this is not a consecutive message */}
                 {!isConsecutive && (
                   <span className={`text-xs ${isModerator ? 'text-right mr-2' : 'ml-2'} text-gray-600 mb-1`}>
                     {message.persona}
                   </span>
                 )}
                 <div 
-                  className={`max-w-[80%] rounded-lg px-4 py-2 ${
+                  // Added shadow to all bubbles; for moderator messages, added a border for a distinct look.
+                  className={`max-w-[80%] rounded-lg px-4 py-2 shadow ${
                     isModerator
-                      ? 'bg-blue-500 text-white ml-auto'
+                      ? 'bg-blue-500 text-white ml-auto border border-blue-600'
                       : 'bg-white text-gray-800 border border-gray-200'
                   } ${isConsecutive ? 'mt-1' : ''}`}
                 >
@@ -41,9 +47,10 @@ function DebatePanel({ messages }) {
                   </div>
                 </div>
               </div>
+              {/* Show moderator avatar on the right side only when not a consecutive message */}
               {isModerator && !isConsecutive && (
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center ml-2 mt-2">
-                  <span className="text-white">M</span>
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center ml-2 mt-2">
+                  <span className="font-bold text-lg text-white">M</span>
                 </div>
               )}
             </div>
