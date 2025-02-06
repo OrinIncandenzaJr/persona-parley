@@ -1,11 +1,10 @@
 /* Add stable scrollbar styles */
 .stable-scrollbar {
   scrollbar-gutter: stable;
-  /* Fallback for browsers that don't support scrollbar-gutter */
-  overflow-y: overlay;
+  overflow-y: scroll !important; /* Force scrollbar to always be present */
 }
 
-/* Optional: Add custom scrollbar styling for better visual consistency */
+/* Custom scrollbar styling for visual consistency */
 .stable-scrollbar::-webkit-scrollbar {
   width: 14px;
 }
