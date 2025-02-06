@@ -40,7 +40,7 @@ function DebatePanel({ messages }) {
                 >
                   <div className="prose prose-sm max-w-none">
                     <ReactMarkdown 
-                      className={isModerator ? 'text-white' : 'text-gray-700'}
+                      className={isModerator ? 'text-white' : 'text-gray-100'}
                     >
                       {message.content}
                     </ReactMarkdown>
