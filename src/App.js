@@ -214,7 +214,7 @@ function App() {
             <div className="space-y-6 w-full flex flex-col">
               {messages.length === 0 ? (
                 <>
-                  <div className="min-h-[60vh] border-2 border-gray-700 rounded-lg bg-gray-800 shadow-lg w-full flex-shrink-0 overflow-y-auto p-4">
+                  <div className="min-h-[60vh] border-2 border-gray-700 rounded-lg bg-gray-800 shadow-lg w-full flex-shrink-0 overflow-y-scroll p-4">
                     <div className="flex flex-col space-y-4">
                       {/* Empty state content */}
                     </div>
