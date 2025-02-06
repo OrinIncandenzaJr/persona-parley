@@ -9,7 +9,7 @@ function PersonaSelector({ onPersonaSelect, selectedPersona, personas = [] }) {
         {personas.map((persona) => (
           <button
             key={persona.id}
-            onClick={() => onPersonaSelect(persona.id)}
+            onClick={() => onPersonaSelect(selectedPersona === persona.id ? null : persona.id)}
             className={`px-10 py-8 text-2xl font-medium rounded-lg transition-all duration-200 ${
               selectedPersona === persona.id
                 ? 'bg-blue-600 text-white shadow-lg scale-102'

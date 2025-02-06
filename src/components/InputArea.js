@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function InputArea({ onSubmit, selectedPersona, isInitialQuestion }) {
+function InputArea({ onSubmit, selectedPersona, isInitialQuestion, personas = [] }) {
   const [inputText, setInputText] = useState('');
 
   const handleSubmit = (e) => {
@@ -19,11 +19,11 @@ function InputArea({ onSubmit, selectedPersona, isInitialQuestion }) {
         className="flex-grow p-2 border border-gray-600 rounded-lg shadow-sm bg-gray-700 text-gray-100 placeholder-gray-400"
         placeholder={
           isInitialQuestion 
-            ? "" // Empty placeholder for initial state
+            ? "" 
             : selectedPersona === 'all'
               ? "Ask all personas to respond..."
               : selectedPersona
-                ? `Ask ${selectedPersona} to respond...`
+                ? `Ask ${personas.find(p => p.id === selectedPersona)?.name || 'Unknown'} to respond...`
                 : "Select a persona to continue the conversation"
         }
         disabled={!isInitialQuestion && !selectedPersona}
