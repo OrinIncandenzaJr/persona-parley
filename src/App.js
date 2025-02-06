@@ -212,11 +212,14 @@ function App() {
             </div>
             
             {messages.length === 0 ? (
-              <InputArea 
-                onSubmit={handleInitialQuestion}
-                selectedPersona={selectedPersona}
-                isInitialQuestion={true}
-              />
+              <div className="space-y-6">
+                <div className="min-h-[60vh] border-2 border-gray-700 rounded-lg bg-gray-800 shadow-lg w-full"></div>
+                <InputArea 
+                  onSubmit={handleInitialQuestion}
+                  selectedPersona={selectedPersona}
+                  isInitialQuestion={true}
+                />
+              </div>
             ) : (
               <div className="space-y-6">
                 <DebatePanel messages={messages} />

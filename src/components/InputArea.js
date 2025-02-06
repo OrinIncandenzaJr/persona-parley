@@ -17,11 +17,15 @@ function InputArea({ onSubmit, selectedPersona, isInitialQuestion }) {
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
         className="flex-grow p-2 border border-gray-600 rounded-lg shadow-sm bg-gray-700 text-gray-100 placeholder-gray-400"
-        placeholder={isInitialQuestion ? 
-          "Enter your debate question to generate relevant personas..." : 
-          (inputText.trim() ? `Type message as Moderator...` : 
-            `${selectedPersona === 'all' ? 'Press Submit to get responses from all personas' : 
-              selectedPersona ? 'Press Submit to let selected persona respond' : 'Select a persona first'}`)}
+        placeholder={
+          isInitialQuestion 
+            ? "" // Empty placeholder for initial state
+            : selectedPersona === 'all'
+              ? "Ask all personas to respond..."
+              : selectedPersona
+                ? `Ask ${selectedPersona} to respond...`
+                : "Select a persona to continue the conversation"
+        }
         disabled={!isInitialQuestion && !selectedPersona}
       />
       <button
