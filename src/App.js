@@ -198,8 +198,8 @@ function App() {
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 p-4 sm:p-8">
-          <div className="max-w-4xl mx-auto">
+        <div className="flex-1 p-4 sm:p-8 overflow-hidden">
+          <div className="max-w-4xl w-full mx-auto flex flex-col">
             <div className="text-center mb-8">
               <h1 className="text-4xl font-bold text-white mb-2">Persona Parley</h1>
               <p className="text-gray-300">Multi-perspective AI Debate Platform</p>
