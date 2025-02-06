@@ -1,13 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import InputArea from './components/InputArea';
 import DebatePanel from './components/DebatePanel';
 import PersonaSelector from './components/PersonaSelector';
 import './App.css';
 
 function App() {
-  const [messages, setMessages] = useState([]);
-  const [selectedPersona, setSelectedPersona] = useState('all');
-  const [personas, setPersonas] = useState([]);
+  const [messages, setMessages] = useState(() => {
+    const saved = localStorage.getItem('messages');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [selectedPersona, setSelectedPersona] = useState(() => {
+    const saved = localStorage.getItem('selectedPersona');
+    return saved || 'all';
+  });
+  const [personas, setPersonas] = useState(() => {
+    const saved = localStorage.getItem('personas');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // Save state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('messages', JSON.stringify(messages));
+    localStorage.setItem('selectedPersona', selectedPersona);
+    localStorage.setItem('personas', JSON.stringify(personas));
+  }, [messages, selectedPersona, personas]);
+
+  const handleReset = () => {
+    setMessages([]);
+    setSelectedPersona('all');
+    setPersonas([]);
+    localStorage.removeItem('messages');
+    localStorage.removeItem('selectedPersona');
+    localStorage.removeItem('personas');
+  };
 
   const generatePersonas = async (question) => {
     try {
@@ -178,6 +203,12 @@ function App() {
             <div className="text-center mb-8">
               <h1 className="text-4xl font-bold text-gray-800 mb-2">Persona Parley</h1>
               <p className="text-gray-600">Multi-perspective AI Debate Platform</p>
+              <button
+                onClick={handleReset}
+                className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+              >
+                Reset Conversation
+              </button>
             </div>
             
             {messages.length === 0 ? (
