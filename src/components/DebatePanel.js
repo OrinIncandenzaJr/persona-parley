@@ -12,10 +12,8 @@ function DebatePanel({ messages }) {
           return (
             <div 
               key={index} 
-              // Apply different justification and a slide-in animation on every message group
               className={`flex ${isModerator ? 'justify-end' : 'justify-start'} ${isConsecutive ? 'mt-1' : 'mt-4'} animate-slideIn`}
             >
-              {/* Show avatar for non-moderator messages only when this is the first in a block */}
               {!isModerator && !isConsecutive && (
                 <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-900 flex items-center justify-center mr-2 mt-2">
                   <span className="font-bold text-lg text-blue-300">
@@ -24,14 +22,12 @@ function DebatePanel({ messages }) {
                 </div>
               )}
               <div className="flex flex-col">
-                {/* Only show the speaker’s name if this is not a consecutive message */}
                 {!isConsecutive && (
                   <span className={`text-xs ${isModerator ? 'text-right mr-2' : 'ml-2'} text-gray-300 mb-1`}>
                     {message.persona}
                   </span>
                 )}
                 <div 
-                  // Added shadow to all bubbles; for moderator messages, added a border for a distinct look.
                   className={`max-w-[80%] rounded-lg px-4 py-2 shadow ${
                     isModerator
                       ? 'bg-blue-600 text-white ml-auto border border-blue-700'
@@ -47,7 +43,6 @@ function DebatePanel({ messages }) {
                   </div>
                 </div>
               </div>
-              {/* Show moderator avatar on the right side only when not a consecutive message */}
               {isModerator && !isConsecutive && (
                 <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center ml-2 mt-2">
                   <span className="font-bold text-lg text-white">M</span>
