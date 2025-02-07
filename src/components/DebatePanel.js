@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import MessageContainer from './MessageContainer';
 
 function DebatePanel({ messages }) {
   return (
-    <div className="min-h-[60vh] border-2 border-gray-700 rounded-lg bg-gray-800 shadow-lg w-full flex-shrink-0 overflow-y-scroll p-4">
-      <div className="flex flex-col space-y-4">
+    <MessageContainer>
         {messages.map((message, index) => {
           const isModerator = message.persona === 'Moderator';
           const isConsecutive = index > 0 && messages[index - 1].persona === message.persona;
@@ -51,8 +51,7 @@ function DebatePanel({ messages }) {
             </div>
           );
         })}
-      </div>
-    </div>
+    </MessageContainer>
   );
 }
 

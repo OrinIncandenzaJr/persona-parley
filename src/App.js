@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import InputArea from './components/InputArea';
 import DebatePanel from './components/DebatePanel';
 import PersonaSelector from './components/PersonaSelector';
+import MessageContainer from './components/MessageContainer';
 import './App.css';
 
 function App() {
@@ -214,11 +215,9 @@ function App() {
             <div className="space-y-6 w-full flex flex-col">
               {messages.length === 0 ? (
                 <>
-                  <div className="min-h-[60vh] max-h-[60vh] border-2 border-gray-700 rounded-lg bg-gray-800 shadow-lg w-full flex-shrink-0 overflow-y-scroll p-4">
-                    <div className="flex flex-col space-y-4">
-                      <div className="h-full"></div>
-                    </div>
-                  </div>
+                  <MessageContainer>
+                    <div className="h-full"></div>
+                  </MessageContainer>
                   <InputArea 
                     onSubmit={handleInitialQuestion}
                     selectedPersona={selectedPersona}
