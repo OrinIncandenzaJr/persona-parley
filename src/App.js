@@ -141,7 +141,7 @@ function App() {
               });
             }
           });
-          await generateSuggestions(message);
+          await generateSuggestions(question);
           
           setMessages(newMessages);
           await generateSuggestions(question);
