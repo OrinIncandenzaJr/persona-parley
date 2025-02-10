@@ -141,6 +141,7 @@ function App() {
               });
             }
           });
+          await generateSuggestions(message);
           
           setMessages(newMessages);
           await generateSuggestions(question);
@@ -246,6 +247,7 @@ function App() {
           persona: data.persona.name, 
           content: cleanResponse.trim() 
         });
+        await generateSuggestions(message);
       }
       setMessages(newMessages);
       
