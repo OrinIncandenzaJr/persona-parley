@@ -17,7 +17,7 @@ function DebatePanel({ messages }) {
               {!isModerator && !isConsecutive && (
                 <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-900 flex items-center justify-center mr-2 mt-2">
                   <span className="font-bold text-lg text-blue-300">
-                    {message.persona.charAt(0).toUpperCase()}
+                    {message.persona.split(' ')[0].charAt(0)}
                   </span>
                 </div>
               )}

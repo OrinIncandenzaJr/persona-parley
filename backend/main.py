@@ -26,26 +26,27 @@ PERSONAS = []
 async def generate_personas(question: str):
     """Generate relevant personas for a given debate question"""
     system_prompt = """Given the debate question, generate 4 distinct and relevant personas that would provide valuable perspectives.
-    You must return a valid JSON array containing exactly 4 objects. Each object must have these fields:
-    - 'id': lowercase hyphenated string (e.g., 'tech-expert')
-    - 'name': display name string
-    - 'description': brief description string
-    
-    Example format:
-    [
-        {
-            "id": "tech-expert",
-            "name": "Technology Expert",
-            "description": "Specialized in digital transformation and its societal impacts"
-        },
-        {
-            "id": "ethics-prof",
-            "name": "Ethics Professor",
-            "description": "Expert in moral philosophy and societal implications"
-        }
-    ]
-    
-    Return ONLY the JSON array, no other text or explanation."""
+Each persona should have a characterful first name followed by their role (e.g., "Brian the Philosopher", "Sarah the Scientist").
+You must return a valid JSON array containing exactly 4 objects. Each object must have these fields:
+- 'id': lowercase hyphenated string (e.g., 'tech-expert')
+- 'name': display name string (e.g., "Marcus the Tech Expert")
+- 'description': brief description string
+
+Example format:
+[
+    {
+        "id": "tech-expert",
+        "name": "Marcus the Tech Expert",
+        "description": "Specialized in digital transformation and its societal impacts"
+    },
+    {
+        "id": "ethics-prof",
+        "name": "Elena the Ethics Professor",
+        "description": "Expert in moral philosophy and societal implications"
+    }
+]
+
+Return ONLY the JSON array, no other text or explanation."""
     
     example_format = """Example format:
     [
