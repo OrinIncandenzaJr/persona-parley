@@ -206,6 +206,8 @@ function App() {
         // Remove various forms of persona introductions
         const patterns = [
           `^${name}:\\s*`,                          // "Name:"
+          `^${name}\\s*:`,                          // "Name :"
+          `^${name}\\s+the\\s+[^:]+:\\s*`,         // "Name the Title:"
           `^As\\s+a\\s+${name},\\s*`,              // "As a Name,"
           `^As\\s+${name},\\s*`,                    // "As Name,"
           `^${name}\\s+here[.,]\\s*`,              // "Name here."
@@ -213,6 +215,7 @@ function App() {
           `^Speaking\\s+as\\s+${name}[.,]\\s*`,    // "Speaking as Name."
           `^From\\s+${name}'s\\s+perspective[.,]\\s*`, // "From Name's perspective."
           `^As\\s+${name}\\s+I\\s+`,               // "As Name I"
+          `^${name}\\s+the\\s+[^:]+\\s*[:-]\\s*`,  // "Name the Title: " or "Name the Title - "
         ];
         
         patterns.forEach(pattern => {
