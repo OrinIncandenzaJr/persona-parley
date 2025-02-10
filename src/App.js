@@ -40,8 +40,16 @@ function App() {
     }
   };
 
-  const handleSuggestionClick = (suggestion) => {
-    handleMessageSubmit(suggestion);
+  const handleSuggestionClick = (suggestion, personaId) => {
+    if (personaId && personaId !== 'all') {
+      const persona = personas.find(p => p.id === personaId);
+      if (persona) {
+        const firstName = persona.name.split(' ')[0];
+        setInputText(`${firstName}, ${suggestion}`);
+      }
+    } else {
+      setInputText(suggestion);
+    }
   };
 
   // Save state to localStorage whenever it changes
@@ -363,6 +371,7 @@ function App() {
           <QuestionSuggestions 
             suggestions={suggestions}
             onSuggestionClick={handleSuggestionClick}
+            selectedPersona={selectedPersona}
           />
         )}
       </div>
