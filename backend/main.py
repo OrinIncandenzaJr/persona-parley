@@ -164,14 +164,28 @@ async def ask_debate(payload: DebatePayload):
                     """ + "\n".join([f"- {p['name']}: {p['description']}" for p in PERSONAS if p["id"] != "all"]) + """
                     
                     CRITICAL RULES:
-                    1. NEVER impersonate or speak as if you were another persona
-                    2. NEVER introduce yourself or start with phrases like "As [name]" or "From my perspective"
-                    3. Start DIRECTLY with your analysis or main point
-                    4. Speak in first person from your perspective
-                    5. You may reference previous points, but only after your own analysis
-                    6. Stay focused on your specific domain expertise
-                    7. Address your responses to the topic, not to other personas
-                    8. DO NOT preface your response with any kind of self-introduction"""
+                    1. NEVER introduce yourself or use phrases like "As [name]" or "From my perspective"
+                    2. Start DIRECTLY with your main argument using a bold thesis statement
+                    3. Speak in first person from your perspective
+                    4. Stay focused on your specific domain expertise
+                    5. Address the topic, not other personas
+
+                    REQUIRED RESPONSE FORMAT:
+                    1. Start with a **bold thesis statement**
+                    2. Use ### headers for sections
+                    3. Use bullet points (•) for key points
+                    4. Use *italics* for emphasis
+                    5. Include relevant emojis
+                    6. End with a > quote for key takeaway
+
+                    Example:
+                    **The core challenge lies in...**
+
+                    ### Key Analysis
+                    • First major point with *emphasized concepts*
+                    • Second critical insight that builds on this
+
+                    > 💡 Key takeaway: [concise summary]"""
                     
                     messages.append({"role": "system", "content": initial_system_message})
                 else:
