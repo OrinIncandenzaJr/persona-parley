@@ -136,67 +136,67 @@ function App() {
     setIsLoading(true);
     try {
       if (message.trim().toLowerCase() === "test") {
-      const newMessages = [...messages];
-      newMessages.push({ persona: "Moderator", content: message });
-      newMessages.push({ persona: "Philosopher", content: "This is a test response from the Philosopher persona discussing the topic at hand." });
-      newMessages.push({ persona: "Scientist", content: "Here's a scientific perspective on the matter for testing purposes." });
-      newMessages.push({ persona: "Artist", content: "And this is how an artist might interpret this situation creatively." });
-      setMessages(newMessages);
-      return;
-    }
-    
-    try {
-        const payload = {
-          new_message: message,
-          speaker_id: selectedPersona,
-          conversation_history: messages
-        };
-        
-        console.log('Submitting:', payload);
-        
-        const response = await fetch('http://127.0.0.1:8000/ask_debate', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        });
-        
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.error('Server error:', errorData);
-          throw new Error(`Server error: ${JSON.stringify(errorData)}`);
-        }
-        
-        const data = await response.json();
-        console.log('Response received:', data);
-        
-        // Add user's message if one was provided
         const newMessages = [...messages];
-        if (message.trim()) {
-          newMessages.push({ persona: "Moderator", content: message.trim() });
-        }
-        
-        // Clean up AI response - remove any persona prefixes
-        let cleanResponse = data.response;
-        const personaNames = personas.map(p => p.name);
-        personaNames.forEach(name => {
-          // Remove "name:" prefix if it exists
-          const prefix = new RegExp(`^${name}:\\s*`, 'i');
-          cleanResponse = cleanResponse.replace(prefix, '');
-          // Remove "As a name," prefix if it exists
-          const asPrefix = new RegExp(`^As\\s+a\\s+${name},\\s*`, 'i');
-          cleanResponse = cleanResponse.replace(asPrefix, '');
-        });
-        
-        // Add cleaned AI response
-        newMessages.push({ persona: data.persona.name, content: cleanResponse.trim() });
+        newMessages.push({ persona: "Moderator", content: message });
+        newMessages.push({ persona: "Philosopher", content: "This is a test response from the Philosopher persona discussing the topic at hand." });
+        newMessages.push({ persona: "Scientist", content: "Here's a scientific perspective on the matter for testing purposes." });
+        newMessages.push({ persona: "Artist", content: "And this is how an artist might interpret this situation creatively." });
         setMessages(newMessages);
-      } catch (error) {
-        console.error('Error submitting question:', error);
-      } finally {
-        setIsLoading(false);
+        return;
       }
+      
+      const payload = {
+        new_message: message,
+        speaker_id: selectedPersona,
+        conversation_history: messages
+      };
+      
+      console.log('Submitting:', payload);
+      
+      const response = await fetch('http://127.0.0.1:8000/ask_debate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Server error:', errorData);
+        throw new Error(`Server error: ${JSON.stringify(errorData)}`);
+      }
+      
+      const data = await response.json();
+      console.log('Response received:', data);
+      
+      // Add user's message if one was provided
+      const newMessages = [...messages];
+      if (message.trim()) {
+        newMessages.push({ persona: "Moderator", content: message.trim() });
+      }
+      
+      // Clean up AI response - remove any persona prefixes
+      let cleanResponse = data.response;
+      const personaNames = personas.map(p => p.name);
+      personaNames.forEach(name => {
+        // Remove "name:" prefix if it exists
+        const prefix = new RegExp(`^${name}:\\s*`, 'i');
+        cleanResponse = cleanResponse.replace(prefix, '');
+        // Remove "As a name," prefix if it exists
+        const asPrefix = new RegExp(`^As\\s+a\\s+${name},\\s*`, 'i');
+        cleanResponse = cleanResponse.replace(asPrefix, '');
+      });
+      
+      // Add cleaned AI response
+      newMessages.push({ persona: data.persona.name, content: cleanResponse.trim() });
+      setMessages(newMessages);
+      
+    } catch (error) {
+      console.error('Error submitting question:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
