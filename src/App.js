@@ -4,6 +4,7 @@ import DebatePanel from './components/DebatePanel';
 import PersonaSelector from './components/PersonaSelector';
 import MessageContainer from './components/MessageContainer';
 import LoadingBar from './components/LoadingBar';
+import QuestionSuggestions from './components/QuestionSuggestions';
 import './App.css';
 
 function App() {
@@ -20,6 +21,27 @@ function App() {
     return saved ? JSON.parse(saved) : [];
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+
+  const generateSuggestions = async (topic) => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/generate_suggestions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ question: topic }),
+      });
+      const data = await response.json();
+      setSuggestions(data);
+    } catch (error) {
+      console.error('Error generating suggestions:', error);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    handleMessageSubmit(suggestion);
+  };
 
   // Save state to localStorage whenever it changes
   useEffect(() => {
@@ -121,6 +143,7 @@ function App() {
           });
           
           setMessages(newMessages);
+          await generateSuggestions(question);
         } catch (error) {
           console.error('Error getting initial responses:', error);
         }
@@ -253,6 +276,14 @@ function App() {
             </div>
           </div>
         </div>
+
+        {/* Right Panel for Suggestions */}
+        {messages.length > 0 && (
+          <QuestionSuggestions 
+            suggestions={suggestions}
+            onSuggestionClick={handleSuggestionClick}
+          />
+        )}
       </div>
     </div>
   );

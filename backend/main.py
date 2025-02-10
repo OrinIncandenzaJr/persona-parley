@@ -118,6 +118,31 @@ async def check_api_key():
 class QuestionPayload(BaseModel):
     question: str
 
+@app.post("/generate_suggestions")
+async def generate_suggestions(payload: QuestionPayload):
+    """Generate suggested follow-up questions based on the conversation"""
+    try:
+        prompt = """Given the current debate topic, generate 5 thought-provoking follow-up questions that would deepen the discussion.
+        Make questions concise and specific. Return only a JSON array of strings.
+        Example: ["How does X impact Y?", "What role does Z play in this?"]"""
+        
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": prompt},
+                {"role": "user", "content": f"Topic: {payload.question}"}
+            ],
+            temperature=0.7,
+            max_tokens=500
+        )
+        
+        import json
+        suggestions = json.loads(response.choices[0].message.content)
+        return suggestions
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/personas")
 async def get_personas(payload: QuestionPayload) -> List[dict]:
     """Generate and return list of personas relevant to the question"""
