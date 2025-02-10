@@ -223,12 +223,48 @@ async def ask_debate(payload: DebatePayload):
             4. Speak in first person from your perspective
             5. You may reference previous points, but only after your own analysis
             6. Stay focused on your specific domain expertise
-            7. Address your responses to the topic, not to other personas"""
+            7. Address your responses to the topic, not to other personas
+
+            FORMATTING REQUIREMENTS:
+            • Use Markdown formatting for better readability
+            • Start with a clear thesis statement in **bold**
+            • Use ### for section headers when changing topics
+            • Use bullet points (•) for listing items or examples
+            • Use *italics* for emphasis on key terms
+            • Include relevant emojis 🤔 to enhance engagement
+            • Break complex ideas into digestible paragraphs
+            • Use > for important quotes or key takeaways
+
+            Example format:
+            **My main point about this topic is...**
+
+            ### Key Considerations
+            • First important point
+            • Second important point with *emphasized term*
+
+            ### Analysis
+            This is a detailed explanation...
+
+            > 💡 Key takeaway: summary of main points"""
             
             messages.append({"role": "system", "content": initial_system_message})
         else:
             # For subsequent messages, just identify the current speaker
-            messages.append({"role": "system", "content": f"You are {speaker['name']}. IMPORTANT: Only speak as yourself, never impersonate others. Your expertise: {speaker['description']}. Begin with 'As a {speaker['name']}' or 'From my perspective' and provide your direct analysis."})
+            messages.append({
+                "role": "system", 
+                "content": f"""You are {speaker['name']}. IMPORTANT: Only speak as yourself, never impersonate others. 
+                Your expertise: {speaker['description']}. 
+
+                Format your response using:
+                • **Bold** for main arguments
+                • ### Headers for sections
+                • Bullet points for lists
+                • *Italics* for emphasis
+                • Relevant emojis
+                • > for key takeaways
+
+                Begin with your direct analysis of the topic."""
+            })
         
         # Add conversation history
         for msg in payload.conversation_history:
