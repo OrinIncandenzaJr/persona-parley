@@ -3,6 +3,7 @@ import InputArea from './components/InputArea';
 import DebatePanel from './components/DebatePanel';
 import PersonaSelector from './components/PersonaSelector';
 import MessageContainer from './components/MessageContainer';
+import LoadingBar from './components/LoadingBar';
 import './App.css';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
     const saved = localStorage.getItem('personas');
     return saved ? JSON.parse(saved) : [];
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   // Save state to localStorage whenever it changes
   useEffect(() => {
@@ -56,7 +58,9 @@ function App() {
 
   // Function to handle initial question submission
   const handleInitialQuestion = async (question) => {
-    if (question.trim().toLowerCase() === "test") {
+    setIsLoading(true);
+    try {
+      if (question.trim().toLowerCase() === "test") {
       const mockPersonas = [
         { id: "p1", name: "Philosopher" },
         { id: "p2", name: "Scientist" },
@@ -119,12 +123,16 @@ function App() {
         setMessages(newMessages);
       } catch (error) {
         console.error('Error getting initial responses:', error);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
 
   const handleMessageSubmit = async (message) => {
-    if (message.trim().toLowerCase() === "test") {
+    setIsLoading(true);
+    try {
+      if (message.trim().toLowerCase() === "test") {
       const newMessages = [...messages];
       newMessages.push({ persona: "Moderator", content: message });
       newMessages.push({ persona: "Philosopher", content: "This is a test response from the Philosopher persona discussing the topic at hand." });
@@ -183,6 +191,8 @@ function App() {
         setMessages(newMessages);
       } catch (error) {
         console.error('Error submitting question:', error);
+      } finally {
+        setIsLoading(false);
       }
   };
 
@@ -211,6 +221,7 @@ function App() {
                 Reset Conversation
               </button>
             </div>
+            {isLoading && <LoadingBar />}
             
             <div className="space-y-6 w-full flex flex-col">
               {messages.length === 0 ? (
