@@ -61,71 +61,74 @@ function App() {
     setIsLoading(true);
     try {
       if (question.trim().toLowerCase() === "test") {
-      const mockPersonas = [
-        { id: "p1", name: "Philosopher" },
-        { id: "p2", name: "Scientist" },
-        { id: "p3", name: "Artist" }
-      ];
-      setPersonas(mockPersonas);
-      
-      const mockMessages = [
-        { persona: "Moderator", content: "Let's discuss the nature of consciousness." },
-        { persona: "Philosopher", content: "Consciousness is fundamentally a question of subjective experience and qualia. We must consider the hard problem of consciousness." },
-        { persona: "Scientist", content: "From a neuroscientific perspective, consciousness emerges from complex neural networks and can be studied through brain activity patterns." },
-        { persona: "Artist", content: "Consciousness is like a canvas where our experiences, dreams, and emotions blend together to create the masterpiece of human experience." }
-      ];
-      setMessages(mockMessages);
-      setSelectedPersona('all');
-      return;
-    }
-
-    const personas = await generatePersonas(question);
-    if (personas) {
-      const initialMessages = [{ persona: "Moderator", content: question }];
-      setMessages(initialMessages);
-      
-      // Automatically get responses from all personas
-      const payload = {
-        new_message: question,
-        speaker_id: 'all',
-        conversation_history: initialMessages
-      };
-      
-      try {
-        const response = await fetch('http://127.0.0.1:8000/ask_debate', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        });
+        const mockPersonas = [
+          { id: "p1", name: "Philosopher" },
+          { id: "p2", name: "Scientist" },
+          { id: "p3", name: "Artist" }
+        ];
+        setPersonas(mockPersonas);
         
-        if (!response.ok) {
-          throw new Error('Failed to get initial responses');
-        }
-        
-        const data = await response.json();
-        const newMessages = [...initialMessages];
-        
-        // Split the combined response by persona sections
-        const responses = data.response.split('### ').filter(Boolean);
-        responses.forEach(response => {
-          const [personaName, ...contentParts] = response.split('\n\n');
-          const content = contentParts.join('\n\n').trim();
-          if (personaName && content) {
-            newMessages.push({
-              persona: personaName.trim(),
-              content: content
-            });
-          }
-        });
-        
-        setMessages(newMessages);
-      } catch (error) {
-        console.error('Error getting initial responses:', error);
-      } finally {
-        setIsLoading(false);
+        const mockMessages = [
+          { persona: "Moderator", content: "Let's discuss the nature of consciousness." },
+          { persona: "Philosopher", content: "Consciousness is fundamentally a question of subjective experience and qualia. We must consider the hard problem of consciousness." },
+          { persona: "Scientist", content: "From a neuroscientific perspective, consciousness emerges from complex neural networks and can be studied through brain activity patterns." },
+          { persona: "Artist", content: "Consciousness is like a canvas where our experiences, dreams, and emotions blend together to create the masterpiece of human experience." }
+        ];
+        setMessages(mockMessages);
+        setSelectedPersona('all');
+        return;
       }
+
+      const personas = await generatePersonas(question);
+      if (personas) {
+        const initialMessages = [{ persona: "Moderator", content: question }];
+        setMessages(initialMessages);
+        
+        // Automatically get responses from all personas
+        const payload = {
+          new_message: question,
+          speaker_id: 'all',
+          conversation_history: initialMessages
+        };
+        
+        try {
+          const response = await fetch('http://127.0.0.1:8000/ask_debate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to get initial responses');
+          }
+          
+          const data = await response.json();
+          const newMessages = [...initialMessages];
+          
+          // Split the combined response by persona sections
+          const responses = data.response.split('### ').filter(Boolean);
+          responses.forEach(response => {
+            const [personaName, ...contentParts] = response.split('\n\n');
+            const content = contentParts.join('\n\n').trim();
+            if (personaName && content) {
+              newMessages.push({
+                persona: personaName.trim(),
+                content: content
+              });
+            }
+          });
+          
+          setMessages(newMessages);
+        } catch (error) {
+          console.error('Error getting initial responses:', error);
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
