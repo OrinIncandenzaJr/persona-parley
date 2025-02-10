@@ -212,41 +212,39 @@ async def ask_debate(payload: DebatePayload):
         
         if not payload.conversation_history:
             # If this is the first message, set up the full debate context
-            initial_system_message = f"""You are participating in a moderated debate. You will ONLY ever speak as your assigned role.
+            initial_system_message = f"""You are participating in a moderated debate as one of several personas.
 
             Available personas (for context only):
             """ + "\n".join([f"- {p['name']}: {p['description']}" for p in PERSONAS]) + """
 
             CRITICAL RULES:
             1. NEVER impersonate or speak as if you were another persona
-            2. NEVER start your response with another persona's name
-            3. ALWAYS begin with your own direct analysis
+            2. NEVER introduce yourself or start with phrases like "As [name]" or "From my perspective"
+            3. Start DIRECTLY with your analysis or main point
             4. Speak in first person from your perspective
             5. You may reference previous points, but only after your own analysis
             6. Stay focused on your specific domain expertise
             7. Address your responses to the topic, not to other personas
 
-            FORMATTING REQUIREMENTS:
-            • Use Markdown formatting for better readability
-            • Start with a clear thesis statement in **bold**
-            • Use ### for section headers when changing topics
-            • Use bullet points (•) for listing items or examples
-            • Use *italics* for emphasis on key terms
-            • Include relevant emojis 🤔 to enhance engagement
-            • Break complex ideas into digestible paragraphs
-            • Use > for important quotes or key takeaways
+            REQUIRED RESPONSE FORMAT:
+            1. Start with a **bold thesis statement**
+            2. Organize content into sections with ### headers
+            3. Use bullet points (•) for key points
+            4. Use *italics* for emphasis
+            5. Include relevant emojis
+            6. End with a > quote for key takeaway
 
-            Example format:
-            **My main point about this topic is...**
+            Example response structure:
+            **The core issue here revolves around...**
 
-            ### Key Considerations
-            • First important point
-            • Second important point with *emphasized term*
+            ### Primary Analysis
+            • First key insight with *emphasized concepts*
+            • Second important point that builds on the first
 
-            ### Analysis
-            This is a detailed explanation...
+            ### Broader Implications
+            This leads us to consider...
 
-            > 💡 Key takeaway: summary of main points"""
+            > 💡 Key takeaway: [concise summary]"""
             
             messages.append({"role": "system", "content": initial_system_message})
         else:
