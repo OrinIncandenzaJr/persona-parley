@@ -23,8 +23,8 @@ function InputArea({ onSubmit, selectedPersona, isInitialQuestion, personas = []
             : selectedPersona === 'all'
               ? "Ask all personas to respond..."
               : selectedPersona
-                ? `Ask ${personas.find(p => p.id === selectedPersona)?.name || 'Unknown'} to respond...`
-                : "Select a persona to continue the conversation"
+                ? `Ask ${personas.find(p => p.id === selectedPersona)?.name || 'Unknown'} a question...`
+                : "Ask the whole panel a question"
         }
         disabled={!isInitialQuestion && !selectedPersona}
       />
