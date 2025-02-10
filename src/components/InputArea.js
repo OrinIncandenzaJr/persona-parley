@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-function InputArea({ onSubmit, selectedPersona, isInitialQuestion, personas = [] }) {
-  const [inputText, setInputText] = useState('');
-
+function InputArea({ onSubmit, selectedPersona, isInitialQuestion, personas = [], inputText, setInputText }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(inputText);
