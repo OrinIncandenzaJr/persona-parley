@@ -65,7 +65,8 @@ function App() {
     setMessages([]);
     setSelectedPersona('all');
     setPersonas([]);
-    setInputText(''); // Add this line to clear the input text
+    setInputText('');
+    setSuggestions([]); // Add this line to clear suggestions
     localStorage.removeItem('messages');
     localStorage.removeItem('selectedPersona');
     localStorage.removeItem('personas');
