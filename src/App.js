@@ -22,6 +22,7 @@ function App() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
+  const [inputText, setInputText] = useState('');
 
   const generateSuggestions = async (topic) => {
     try {
@@ -336,6 +337,8 @@ function App() {
                     selectedPersona={selectedPersona}
                     isInitialQuestion={true}
                     personas={personas}
+                    inputText={inputText}
+                    setInputText={setInputText}
                   />
                 </>
               ) : (
@@ -346,6 +349,8 @@ function App() {
                     selectedPersona={selectedPersona}
                     isInitialQuestion={false}
                     personas={personas}
+                    inputText={inputText}
+                    setInputText={setInputText}
                   />
                 </>
               )}
