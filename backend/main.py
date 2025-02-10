@@ -165,12 +165,13 @@ async def ask_debate(payload: DebatePayload):
                     
                     CRITICAL RULES:
                     1. NEVER impersonate or speak as if you were another persona
-                    2. NEVER start your response with another persona's name
-                    3. ALWAYS begin with your own direct analysis
+                    2. NEVER introduce yourself or start with phrases like "As [name]" or "From my perspective"
+                    3. Start DIRECTLY with your analysis or main point
                     4. Speak in first person from your perspective
                     5. You may reference previous points, but only after your own analysis
                     6. Stay focused on your specific domain expertise
-                    7. Address your responses to the topic, not to other personas"""
+                    7. Address your responses to the topic, not to other personas
+                    8. DO NOT preface your response with any kind of self-introduction"""
                     
                     messages.append({"role": "system", "content": initial_system_message})
                 else:
@@ -253,7 +254,9 @@ async def ask_debate(payload: DebatePayload):
             messages.append({
                 "role": "system", 
                 "content": f"""You are {speaker['name']}. IMPORTANT: Only speak as yourself, never impersonate others. 
-                Your expertise: {speaker['description']}. 
+                Your expertise: {speaker['description']}.
+
+                CRITICAL: Start DIRECTLY with your analysis. DO NOT introduce yourself or use phrases like "As [name]" or "From my perspective".
 
                 Format your response using:
                 • **Bold** for main arguments
@@ -263,7 +266,7 @@ async def ask_debate(payload: DebatePayload):
                 • Relevant emojis
                 • > for key takeaways
 
-                Begin with your direct analysis of the topic."""
+                Begin immediately with your main point or analysis."""
             })
         
         # Add conversation history
