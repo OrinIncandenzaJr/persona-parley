@@ -45,7 +45,9 @@ function App() {
       const persona = personas.find(p => p.id === personaId);
       if (persona) {
         const firstName = persona.name.split(' ')[0];
-        setInputText(`${firstName}, ${suggestion}`);
+        // Make first letter of suggestion lowercase when combining with persona name
+        const lowercaseQuestion = suggestion.charAt(0).toLowerCase() + suggestion.slice(1);
+        setInputText(`${firstName}, ${lowercaseQuestion}`);
       }
     } else {
       setInputText(suggestion);
