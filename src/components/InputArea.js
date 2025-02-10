@@ -7,6 +7,22 @@ function InputArea({ onSubmit, selectedPersona, isInitialQuestion, personas = []
     setInputText('');
   };
 
+  // Update input text when persona changes if it's a suggested question
+  React.useEffect(() => {
+    if (inputText && selectedPersona && selectedPersona !== 'all') {
+      const persona = personas.find(p => p.id === selectedPersona);
+      if (persona) {
+        const firstName = persona.name.split(' ')[0];
+        // Check if current input starts with a name
+        const currentNameMatch = inputText.match(/^[A-Z][a-z]+,\s/);
+        if (currentNameMatch) {
+          // Replace existing name
+          setInputText(`${firstName}, ${inputText.slice(currentNameMatch[0].length)}`);
+        }
+      }
+    }
+  }, [selectedPersona, personas, inputText]);
+
   return (
     <form onSubmit={handleSubmit} className="w-full flex items-center space-x-2 p-4">
       <input
