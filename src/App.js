@@ -199,16 +199,26 @@ function App() {
         newMessages.push({ persona: "Moderator", content: message.trim() });
       }
       
-      // Clean up AI response - remove any persona prefixes
+      // Clean up AI response - remove any persona prefixes and introductions
       let cleanResponse = data.response;
       const personaNames = personas.map(p => p.name);
       personaNames.forEach(name => {
-        // Remove "name:" prefix if it exists
-        const prefix = new RegExp(`^${name}:\\s*`, 'i');
-        cleanResponse = cleanResponse.replace(prefix, '');
-        // Remove "As a name," prefix if it exists
-        const asPrefix = new RegExp(`^As\\s+a\\s+${name},\\s*`, 'i');
-        cleanResponse = cleanResponse.replace(asPrefix, '');
+        // Remove various forms of persona introductions
+        const patterns = [
+          `^${name}:\\s*`,                          // "Name:"
+          `^As\\s+a\\s+${name},\\s*`,              // "As a Name,"
+          `^As\\s+${name},\\s*`,                    // "As Name,"
+          `^${name}\\s+here[.,]\\s*`,              // "Name here."
+          `^This\\s+is\\s+${name}[.,]\\s*`,        // "This is Name."
+          `^Speaking\\s+as\\s+${name}[.,]\\s*`,    // "Speaking as Name."
+          `^From\\s+${name}'s\\s+perspective[.,]\\s*`, // "From Name's perspective."
+          `^As\\s+${name}\\s+I\\s+`,               // "As Name I"
+        ];
+        
+        patterns.forEach(pattern => {
+          const regex = new RegExp(pattern, 'i');
+          cleanResponse = cleanResponse.replace(regex, '');
+        });
       });
       
       // Handle responses based on whether it's "all" or individual persona
