@@ -36,3 +36,48 @@
     transform: rotate(360deg);
   }
 }
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  color: inherit;
+  font-weight: 600;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.markdown-content strong {
+  color: inherit;
+  font-weight: 600;
+}
+
+.markdown-content em {
+  color: inherit;
+}
+
+.markdown-content blockquote {
+  color: inherit;
+  border-left: 3px solid currentColor;
+  padding-left: 1em;
+  margin: 1em 0;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  color: inherit;
+  padding-left: 1.5em;
+}
+
+.markdown-content li {
+  color: inherit;
+}
+
+.markdown-content code {
+  color: inherit;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}

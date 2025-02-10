@@ -34,9 +34,9 @@ function DebatePanel({ messages }) {
                       : 'bg-gray-700 text-gray-100 border border-gray-600'
                   } ${isConsecutive ? 'mt-1' : ''}`}
                 >
-                  <div className="prose prose-sm max-w-none">
+                  <div className="prose prose-sm max-w-none markdown-content">
                     <ReactMarkdown 
-                      className={isModerator ? 'text-white' : 'text-gray-100'}
+                      className={`${isModerator ? 'text-white' : 'text-gray-100'} markdown-content`}
                     >
                       {message.content}
                     </ReactMarkdown>
