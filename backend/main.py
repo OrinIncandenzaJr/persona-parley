@@ -209,10 +209,14 @@ async def ask_debate(payload: DebatePayload):
                     "persona": persona
                 })
             
-            # Combine all responses with proper formatting
+            # Return array of responses
             combined_response = {
-                "response": "".join(r["response"] for r in all_responses),
-                "persona": {"id": "all", "name": "All", "description": "Combined response from all personas"}
+                "responses": [
+                    {
+                        "persona": r["persona"],
+                        "content": r["response"].replace(f"### {r['persona']['name']}\n\n", "").strip()
+                    } for r in all_responses
+                ]
             }
             return combined_response
             

@@ -281,18 +281,14 @@ function App() {
       
       // Handle responses based on whether it's "all" or individual persona
       if (selectedPersona === 'all') {
-        // Split the combined response by persona sections
-        const responses = data.response.split('### ').filter(Boolean);
-        responses.forEach(response => {
-          const [personaName, ...contentParts] = response.split('\n\n');
-          const content = contentParts.join('\n\n').trim();
-          if (personaName && content) {
+        if (data.responses) {
+          data.responses.forEach(response => {
             newMessages.push({
-              persona: personaName.trim(),
-              content: content
+              persona: response.persona.name,
+              content: response.content
             });
-          }
-        });
+          });
+        }
       } else {
         // Add single persona response
         newMessages.push({ 
