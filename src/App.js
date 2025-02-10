@@ -62,17 +62,17 @@ function App() {
     try {
       if (question.trim().toLowerCase() === "test") {
         const mockPersonas = [
-          { id: "p1", name: "Philosopher" },
-          { id: "p2", name: "Scientist" },
-          { id: "p3", name: "Artist" }
+          { id: "p1", name: "Brian the Philosopher", description: "Expert in metaphysics and ethics" },
+          { id: "p2", name: "Sarah the Scientist", description: "Specialized in quantum physics and neuroscience" },
+          { id: "p3", name: "Marcus the Artist", description: "Contemporary visual artist and art theorist" }
         ];
         setPersonas(mockPersonas);
         
         const mockMessages = [
           { persona: "Moderator", content: "Let's discuss the nature of consciousness." },
-          { persona: "Philosopher", content: "Consciousness is fundamentally a question of subjective experience and qualia. We must consider the hard problem of consciousness." },
-          { persona: "Scientist", content: "From a neuroscientific perspective, consciousness emerges from complex neural networks and can be studied through brain activity patterns." },
-          { persona: "Artist", content: "Consciousness is like a canvas where our experiences, dreams, and emotions blend together to create the masterpiece of human experience." }
+          { persona: "Brian the Philosopher", content: "Consciousness is fundamentally a question of subjective experience and qualia. We must consider the hard problem of consciousness." },
+          { persona: "Sarah the Scientist", content: "From a neuroscientific perspective, consciousness emerges from complex neural networks and can be studied through brain activity patterns." },
+          { persona: "Marcus the Artist", content: "Consciousness is like a canvas where our experiences, dreams, and emotions blend together to create the masterpiece of human experience." }
         ];
         setMessages(mockMessages);
         setSelectedPersona('all');
