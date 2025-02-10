@@ -84,20 +84,51 @@ function App() {
     try {
       if (question.trim().toLowerCase() === "test") {
         const mockPersonas = [
-          { id: "p1", name: "Brian the Philosopher", description: "Expert in metaphysics and ethics" },
-          { id: "p2", name: "Sarah the Scientist", description: "Specialized in quantum physics and neuroscience" },
-          { id: "p3", name: "Marcus the Artist", description: "Contemporary visual artist and art theorist" }
+          { 
+            id: "all", 
+            name: "All", 
+            description: "Get responses from all personas" 
+          },
+          { 
+            id: "philosopher", 
+            name: "Alex the Philosopher", 
+            description: "Expert in ethics and metaphysics" 
+          },
+          { 
+            id: "scientist", 
+            name: "Sarah the Scientist", 
+            description: "Specialized in quantum physics" 
+          },
+          { 
+            id: "historian", 
+            name: "Marcus the Historian", 
+            description: "Expert in ancient civilizations" 
+          },
+          { 
+            id: "artist", 
+            name: "Luna the Artist", 
+            description: "Contemporary visual artist" 
+          }
         ];
         setPersonas(mockPersonas);
         
         const mockMessages = [
-          { persona: "Moderator", content: "Let's discuss the nature of consciousness." },
-          { persona: "Brian the Philosopher", content: "Consciousness is fundamentally a question of subjective experience and qualia. We must consider the hard problem of consciousness." },
-          { persona: "Sarah the Scientist", content: "From a neuroscientific perspective, consciousness emerges from complex neural networks and can be studied through brain activity patterns." },
-          { persona: "Marcus the Artist", content: "Consciousness is like a canvas where our experiences, dreams, and emotions blend together to create the masterpiece of human experience." }
+          { 
+            persona: "Moderator", 
+            content: "Let's explore the relationship between art and science." 
+          },
+          { 
+            persona: "Alex the Philosopher", 
+            content: "**The intersection of art and science reveals fundamental truths about human perception.**\n\n### Key Points\n• Both domains seek to understand reality\n• Art provides intuitive insights while science offers empirical evidence\n\n> 🤔 We must consider how these approaches complement each other." 
+          },
+          { 
+            persona: "Sarah the Scientist", 
+            content: "### Scientific Perspective\n\n**Research shows that artistic activities stimulate multiple brain regions simultaneously.**\n\n• Neural imaging reveals increased connectivity during creative tasks\n• The scientific method itself often requires creative thinking\n\n> 🧬 The boundary between art and science is more fluid than many realize." 
+          }
         ];
         setMessages(mockMessages);
         setSelectedPersona('all');
+        await generateSuggestions("Let's explore the relationship between art and science.");
         return;
       }
 
@@ -161,11 +192,20 @@ function App() {
     try {
       if (message.trim().toLowerCase() === "test") {
         const newMessages = [...messages];
-        newMessages.push({ persona: "Moderator", content: message });
-        newMessages.push({ persona: "Philosopher", content: "This is a test response from the Philosopher persona discussing the topic at hand." });
-        newMessages.push({ persona: "Scientist", content: "Here's a scientific perspective on the matter for testing purposes." });
-        newMessages.push({ persona: "Artist", content: "And this is how an artist might interpret this situation creatively." });
+        newMessages.push({ 
+          persona: "Moderator", 
+          content: "How does technology influence this relationship?" 
+        });
+        newMessages.push({ 
+          persona: "Luna the Artist", 
+          content: "### Digital Revolution in Art\n\n**Technology has transformed artistic expression in unprecedented ways.**\n\n• Digital tools have created new art forms\n• Virtual reality opens new possibilities\n\n> 🎨 The fusion of technology and art is creating entirely new aesthetic experiences." 
+        });
+        newMessages.push({ 
+          persona: "Marcus the Historian", 
+          content: "### Historical Context\n\n**Throughout history, technological advances have always shaped artistic expression.**\n\n• The invention of photography changed painting forever\n• Digital age parallels the industrial revolution's impact\n\n> 📚 History shows us that art adapts and thrives with new technology." 
+        });
         setMessages(newMessages);
+        await generateSuggestions("How does technology influence this relationship?");
         return;
       }
       
