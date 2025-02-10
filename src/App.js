@@ -205,6 +205,8 @@ function App() {
       personaNames.forEach(name => {
         // Remove various forms of persona introductions
         const patterns = [
+          `^As\\s+${name}\\s+the\\s+[^,]+,\\s*`,    // Matches "As Akiko the Anime Fan, "
+          `^${name}\\s+the\\s+[^,]+,\\s*`,          // Matches "Akiko the Anime Fan, "
           `^${name}:\\s*`,                          // "Name:"
           `^${name}\\s*:`,                          // "Name :"
           `^${name}\\s+the\\s+[^:]+:\\s*`,         // "Name the Title:"
