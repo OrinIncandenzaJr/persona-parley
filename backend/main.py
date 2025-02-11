@@ -4,13 +4,34 @@ from typing import List, Optional
 from fastapi.middleware.cors import CORSMiddleware
 from openai import OpenAI
 import os
+import boto3
+from botocore.exceptions import ClientError
+
+def get_openai_key():
+    """Get OpenAI API key from AWS Parameter Store or local env"""
+    # First try local environment variable
+    local_key = os.getenv('OPENAI_API_KEY')
+    if local_key:
+        return local_key
+        
+    try:
+        # If no local key, try AWS Parameter Store
+        ssm = boto3.client('ssm')
+        parameter_name = os.getenv('OPENAI_KEY_PARAMETER', '/persona-parley/OPENAI_API_KEY')
+        response = ssm.get_parameter(Name=parameter_name, WithDecryption=True)
+        return response['Parameter']['Value']
+    except ClientError as e:
+        print(f"Failed to get parameter from AWS: {e}")
+        return None
 
 app = FastAPI()
 
 # Configure OpenAI
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
-if not client.api_key:
-    raise ValueError("OPENAI_API_KEY environment variable is not set")
+api_key = get_openai_key()
+if not api_key:
+    raise ValueError("OpenAI API key not found in environment or Parameter Store")
+    
+client = OpenAI(api_key=api_key)
 
 app.add_middleware(
     CORSMiddleware,
