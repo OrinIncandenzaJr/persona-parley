@@ -45,6 +45,9 @@ app.add_middleware(
 def read_root():
     return {"hello": "world"}
 
+# Wrap FastAPI app with Mangum
+handler = Mangum(app)
+
 # Initialize empty personas list
 PERSONAS = []
 
