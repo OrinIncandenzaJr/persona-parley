@@ -41,6 +41,10 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+@app.get("/")
+def read_root():
+    return {"hello": "world"}
+
 # Initialize empty personas list
 PERSONAS = []
 
