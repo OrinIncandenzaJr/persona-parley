@@ -6,6 +6,7 @@ from openai import OpenAI
 import os
 import boto3
 from botocore.exceptions import ClientError
+from mangum import Mangum
 
 def get_openai_key():
     """Get OpenAI API key from AWS Parameter Store or local env"""
