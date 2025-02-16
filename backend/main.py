@@ -7,6 +7,14 @@ import os
 import boto3
 from botocore.exceptions import ClientError
 from mangum import Mangum
+import json
+import sys
+import openai
+import httpx
+
+print("Python path inside Lambda:", sys.path)
+print("OpenAI version inside Lambda:", openai.__version__)
+print("httpx version inside Lambda:", httpx.__version__)
 
 
 def get_openai_key():
@@ -33,7 +41,7 @@ api_key = get_openai_key()
 if not api_key:
     raise ValueError("OpenAI API key not found in environment or Parameter Store")
     
-client = OpenAI(api_key=api_key)
+client = OpenAI(api_key=api_key, http_client=None)
 
 app.add_middleware(
     CORSMiddleware,
@@ -65,7 +73,10 @@ def read_root():
     }
 
 # Wrap FastAPI app with Mangum for AWS Lambda
-lambda_handler = Mangum(app)
+def lambda_handler(event, context):
+    print("Received event:", json.dumps(event, indent=2))  # Log incoming event
+    mangum_handler = Mangum(app)
+    return mangum_handler(event, context)
 
 # Initialize empty personas list
 PERSONAS = []
