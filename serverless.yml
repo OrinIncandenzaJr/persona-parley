@@ -45,7 +45,7 @@ functions:
       STAGE: ${sls:stage}
     package:
       patterns:
-        - 'backend/**'
+        - 'backend/**/*.py'
         - 'requirements.txt'
 
 plugins:
@@ -66,4 +66,3 @@ custom:
     useStaticCache: false
     useDownloadCache: false
     pythonBin: python
-    vendor: requirements
