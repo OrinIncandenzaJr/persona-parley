@@ -36,10 +36,19 @@ function App() {
         },
         body: JSON.stringify({ question: topic }),
       });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
-      setSuggestions(data);
+      if (Array.isArray(data)) {
+        setSuggestions(data);
+      } else {
+        console.error('Received non-array suggestions:', data);
+        setSuggestions([]);
+      }
     } catch (error) {
       console.error('Error generating suggestions:', error);
+      setSuggestions([]); // Set empty array on error
     }
   };
 
@@ -305,9 +314,9 @@ function App() {
           persona: data.persona.name, 
           content: cleanResponse.trim() 
         });
-        await generateSuggestions(message);
       }
       setMessages(newMessages);
+      await generateSuggestions(message); // Moved outside the else block
       
     } catch (error) {
       console.error('Error submitting question:', error);
