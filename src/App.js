@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import InputArea from './components/InputArea';
-
-const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8000';
 import DebatePanel from './components/DebatePanel';
 import PersonaSelector from './components/PersonaSelector';
 import MessageContainer from './components/MessageContainer';
 import LoadingBar from './components/LoadingBar';
 import QuestionSuggestions from './components/QuestionSuggestions';
 import './App.css';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8000';
 
 function App() {
   const [messages, setMessages] = useState(() => {
