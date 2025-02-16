@@ -45,7 +45,8 @@ functions:
       STAGE: ${sls:stage}
     package:
       patterns:
-        - 'backend/main.py'
+        - 'backend/**'
+        - '.serverless-requirements/**'
         - 'requirements.txt'
 
 plugins:
@@ -65,3 +66,10 @@ custom:
     zip: true
     useStaticCache: false
     useDownloadCache: false
+    pythonBin: python
+    layer:
+      name: python-deps
+      description: Python dependencies
+    noDeploy: []
+    dockerizePip: true
+    vendor: .serverless-requirements
