@@ -177,6 +177,10 @@ async def generate_suggestions(payload: QuestionPayload):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+
 @app.post("/personas")
 async def get_personas(payload: QuestionPayload) -> List[dict]:
     """Generate and return list of personas relevant to the question"""
