@@ -1,5 +1,0 @@
-serverless
-serverless-python-requirements
-pytest
-black
-flake8
