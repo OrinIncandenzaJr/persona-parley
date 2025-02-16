@@ -6,7 +6,8 @@ from openai import OpenAI
 import os
 import boto3
 from botocore.exceptions import ClientError
-from mangum import Mangum
+from aws_lambda_web_adapter import Handler
+
 
 def get_openai_key():
     """Get OpenAI API key from AWS Parameter Store or local env"""
@@ -47,7 +48,7 @@ def read_root():
     return {"hello": "world"}
 
 # Wrap FastAPI app with Mangum
-handler = Mangum(app)
+lambda_handler = Handler(app)
 
 # Initialize empty personas list
 PERSONAS = []
