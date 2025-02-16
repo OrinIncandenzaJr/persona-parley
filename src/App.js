@@ -113,6 +113,10 @@ function App() {
     
     setIsLoading(true);
     try {
+      // After personas generation
+      const personas = await generatePersonas(question);
+      console.log('Generated personas:', personas);
+
       if (question.trim().toLowerCase() === "test") {
         const mockPersonas = [
           { 
@@ -164,6 +168,8 @@ function App() {
       }
 
       const personas = await generatePersonas(question);
+      console.log('Generated personas:', personas);
+      
       if (personas) {
         const initialMessages = [{ persona: "Moderator", content: question }];
         setMessages(initialMessages);
@@ -174,6 +180,7 @@ function App() {
           speaker_id: 'all',
           conversation_history: initialMessages
         };
+        console.log('Sending ask_debate payload:', payload);
         
         try {
           const response = await fetch(`${API_URL}/ask_debate`, {
@@ -184,11 +191,14 @@ function App() {
             body: JSON.stringify(payload),
           });
           
+          console.log('ask_debate response status:', response.status);
+          
           if (!response.ok) {
-            throw new Error('Failed to get initial responses');
+            throw new Error(`Failed to get initial responses: ${response.status}`);
           }
           
           const data = await response.json();
+          console.log('ask_debate response data:', data);
           const newMessages = [...initialMessages];
           
           if (data.responses) {

@@ -228,11 +228,14 @@ async def get_personas(payload: QuestionPayload) -> List[dict]:
 
 @app.post("/ask_debate")
 async def ask_debate(payload: DebatePayload):
+    print("Received ask_debate payload:", payload)
     try:
         if payload.speaker_id == "all":
+            print("Processing all personas response")
             # Handle all personas case
             all_responses = []
             for persona in [p for p in PERSONAS if p["id"] != "all"]:
+                print(f"Processing response for {persona['name']}")
                 messages = []
                 
                 if not payload.conversation_history:
