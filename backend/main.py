@@ -7,7 +7,6 @@ import os
 import boto3
 from botocore.exceptions import ClientError
 from mangum import Mangum
-from aws_lambda_web_adapter import Handler
 
 
 def get_openai_key():

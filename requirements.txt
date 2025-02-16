@@ -4,4 +4,3 @@ openai
 python-dotenv
 boto3
 mangum
-aws-lambda-web-adapter
