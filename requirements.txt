@@ -3,3 +3,10 @@ mangum==0.17.0
 openai==1.8.0
 boto3==1.34.14
 uvicorn==0.27.1
+
+[dev]
+serverless
+serverless-python-requirements
+pytest
+black
+flake8
