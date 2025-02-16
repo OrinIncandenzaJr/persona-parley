@@ -57,15 +57,13 @@ plugins:
 custom:
   pythonRequirements:
     layer:
-      name: python-deps
-      description: Python dependencies for Persona Parley
+      name: persona-parley-deps-${sls:stage}-${sls:instanceId}  # Forces a unique layer per deploy
     noDeploy:
       - boto3
       - botocore
-    slim: false
-    strip: false
+      - pip
+      - setuptools
+      - wheel
+    slim: true
+    strip: true
     dockerizePip: true
-    zip: true
-    useStaticCache: false
-    useDownloadCache: false
-    pythonBin: python
