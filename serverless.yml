@@ -34,3 +34,15 @@ custom:
     layer:
       name: python-deps
       description: Python dependencies for Persona Parley
+    noDeploy:
+      - pytest
+      - pytest-*
+      - boto3
+      - botocore
+      - docutils
+      - jmespath
+      - pip
+      - setuptools
+      - wheel
+    slim: true
+    strip: true
