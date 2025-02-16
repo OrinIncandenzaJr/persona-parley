@@ -167,9 +167,7 @@ function App() {
         return;
       }
 
-      const personas = await generatePersonas(question);
-      console.log('Generated personas:', personas);
-      
+      // Use the result from the earlier personas generation
       if (personas) {
         const initialMessages = [{ persona: "Moderator", content: question }];
         setMessages(initialMessages);
