@@ -46,7 +46,6 @@ functions:
     package:
       patterns:
         - 'backend/**'
-        - '.serverless-requirements/**'
         - 'requirements.txt'
 
 plugins:
@@ -67,4 +66,4 @@ custom:
     useStaticCache: false
     useDownloadCache: false
     pythonBin: python
-    vendor: .serverless-requirements
+    vendor: requirements
