@@ -40,7 +40,8 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "https://*.amplifyapp.com",  # This will allow any Amplify app domain
-        os.getenv('FRONTEND_URL', '')  # Optional: Add specific frontend URL from environment
+        os.getenv('FRONTEND_URL', ''),  # Optional: Add specific frontend URL from environment
+        "https://6va7jv28x3.execute-api.us-east-1.amazonaws.com"  # Add API Gateway domain
     ],
     allow_credentials=True,
     allow_methods=["*"],
