@@ -36,9 +36,24 @@ __pycache__/
 .serverless/
 .serverless
 serverless.env.yml
+node_modules/
+.webpack/
+.esbuild/
+
+# Python
+*.pyc
+.pytest_cache/
+*.pyo
+*.pyd
+.Python
+*.py[cod]
+*$py.class
+.python-version
 
 # Additional cleanup
 .vscode/
 .idea/
 *.swp
 *.swo
+.DS_Store
+Thumbs.db
