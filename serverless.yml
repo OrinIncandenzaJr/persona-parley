@@ -59,20 +59,6 @@ custom:
     noDeploy:
       - boto3
       - botocore
-      - pip
-      - setuptools
-      - wheel
-      - pytest
-    slim: true
-    strip: true
+    slim: false
+    strip: false
     dockerizePip: true
-    slimPatterns:
-      - '**/*.pyc'
-      - '**/*.pyo'
-      - '**/__pycache__'
-      - '**/*.dist-info'
-      - '**/*.egg-info'
-      - '**/tests/'
-      - '**/.mypy_cache'
-      - '**/.pytest_cache'
-      - '**/.hypothesis'
