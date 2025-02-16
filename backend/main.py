@@ -49,7 +49,19 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    return {"hello": "world"}
+    """Root endpoint providing API information"""
+    return {
+        "name": "Persona Parley API",
+        "version": "1.0.0",
+        "description": "An AI-powered debate platform with multiple personas",
+        "endpoints": {
+            "POST /personas": "Generate debate personas for a given question",
+            "POST /ask_debate": "Get responses from selected personas",
+            "POST /generate_suggestions": "Generate follow-up questions",
+            "GET /check_api_key": "Verify API key configuration"
+        },
+        "status": "running"
+    }
 
 # Wrap FastAPI app with Mangum for AWS Lambda
 lambda_handler = Mangum(app)
