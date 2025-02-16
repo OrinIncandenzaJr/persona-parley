@@ -24,3 +24,10 @@ yarn-error.log*
 .aider*
 venv/
 .env
+package/
+unzipped_lambda/
+unzipped_package/
+zappa/
+__pycache__/
+*.zip
+*.json
