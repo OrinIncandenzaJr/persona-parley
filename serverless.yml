@@ -1,0 +1,36 @@
+service: persona-parley
+
+provider:
+  name: aws
+  runtime: python3.12
+  region: us-east-1
+  environment:
+    OPENAI_API_KEY: ${ssm:/persona-parley/OPENAI_API_KEY}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - ssm:GetParameter
+          Resource: 
+            - arn:aws:ssm:${aws:region}:${aws:accountId}:parameter/persona-parley/*
+
+functions:
+  api:
+    handler: backend.main.lambda_handler
+    events:
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors: true
+    environment:
+      STAGE: ${sls:stage}
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    layer:
+      name: python-deps
+      description: Python dependencies for Persona Parley

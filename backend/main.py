@@ -6,6 +6,7 @@ from openai import OpenAI
 import os
 import boto3
 from botocore.exceptions import ClientError
+from mangum import Mangum
 from aws_lambda_web_adapter import Handler
 
 
@@ -47,8 +48,8 @@ app.add_middleware(
 def read_root():
     return {"hello": "world"}
 
-# Wrap FastAPI app with Mangum
-lambda_handler = Handler(app)
+# Wrap FastAPI app with Mangum for AWS Lambda
+lambda_handler = Mangum(app)
 
 # Initialize empty personas list
 PERSONAS = []

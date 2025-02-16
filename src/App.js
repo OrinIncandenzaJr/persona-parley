@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8000';
 import InputArea from './components/InputArea';
 import DebatePanel from './components/DebatePanel';
 import PersonaSelector from './components/PersonaSelector';
@@ -26,7 +28,7 @@ function App() {
 
   const generateSuggestions = async (topic) => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/generate_suggestions', {
+      const response = await fetch(`${API_URL}/generate_suggestions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,7 +76,7 @@ function App() {
 
   const generatePersonas = async (question) => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/personas', {
+      const response = await fetch(`${API_URL}/personas`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -158,7 +160,7 @@ function App() {
         };
         
         try {
-          const response = await fetch('http://127.0.0.1:8000/ask_debate', {
+          const response = await fetch(`${API_URL}/ask_debate`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -226,7 +228,7 @@ function App() {
       
       console.log('Submitting:', payload);
       
-      const response = await fetch('http://127.0.0.1:8000/ask_debate', {
+      const response = await fetch(`${API_URL}/ask_debate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
