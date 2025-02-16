@@ -31,3 +31,14 @@ zappa/
 __pycache__/
 *.zip
 *.json
+
+# Serverless specific
+.serverless/
+.serverless
+serverless.env.yml
+
+# Additional cleanup
+.vscode/
+.idea/
+*.swp
+*.swo
