@@ -30,7 +30,7 @@ package:
     - '!package.json'
     - '!package-lock.json'
     - '!README.md'
-    - 'backend/main.py'
+    - 'backend/**'
     - 'requirements.txt'
 
 functions:
@@ -62,3 +62,6 @@ custom:
     slim: false
     strip: false
     dockerizePip: true
+    zip: true
+    useStaticCache: false
+    useDownloadCache: false
