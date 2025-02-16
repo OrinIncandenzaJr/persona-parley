@@ -67,9 +67,4 @@ custom:
     useStaticCache: false
     useDownloadCache: false
     pythonBin: python
-    layer:
-      name: python-deps
-      description: Python dependencies
-    noDeploy: []
-    dockerizePip: true
     vendor: .serverless-requirements
