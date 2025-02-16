@@ -15,6 +15,24 @@ provider:
           Resource: 
             - arn:aws:ssm:${aws:region}:${aws:accountId}:parameter/persona-parley/*
 
+package:
+  individually: true
+  patterns:
+    - '!node_modules/**'
+    - '!frontend/**'
+    - '!.venv/**'
+    - '!__pycache__/**'
+    - '!.pytest_cache/**'
+    - '!tests/**'
+    - '!.git/**'
+    - '!*.pyc'
+    - '!.DS_Store'
+    - '!package.json'
+    - '!package-lock.json'
+    - '!README.md'
+    - 'backend/main.py'
+    - 'requirements.txt'
+
 functions:
   api:
     handler: backend.main.lambda_handler
@@ -25,6 +43,10 @@ functions:
           cors: true
     environment:
       STAGE: ${sls:stage}
+    package:
+      patterns:
+        - 'backend/main.py'
+        - 'requirements.txt'
 
 plugins:
   - serverless-python-requirements
@@ -35,14 +57,22 @@ custom:
       name: python-deps
       description: Python dependencies for Persona Parley
     noDeploy:
-      - pytest
-      - pytest-*
       - boto3
       - botocore
-      - docutils
-      - jmespath
       - pip
       - setuptools
       - wheel
+      - pytest
     slim: true
     strip: true
+    dockerizePip: true
+    slimPatterns:
+      - '**/*.pyc'
+      - '**/*.pyo'
+      - '**/__pycache__'
+      - '**/*.dist-info'
+      - '**/*.egg-info'
+      - '**/tests/'
+      - '**/.mypy_cache'
+      - '**/.pytest_cache'
+      - '**/.hypothesis'
