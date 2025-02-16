@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import InputArea from './components/InputArea';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8000';
-import InputArea from './components/InputArea';
 import DebatePanel from './components/DebatePanel';
 import PersonaSelector from './components/PersonaSelector';
 import MessageContainer from './components/MessageContainer';
