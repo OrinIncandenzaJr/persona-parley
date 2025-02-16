@@ -76,7 +76,16 @@ def read_root():
 def lambda_handler(event, context):
     print("Received event:", json.dumps(event, indent=2))  # Log incoming event
     mangum_handler = Mangum(app)
-    return mangum_handler(event, context)
+    response = mangum_handler(event, context)
+    print("Returning response to API Gateway:", json.dumps(response))
+    return {
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+        },
+        "body": json.dumps(response),
+    }
 
 # Initialize empty personas list
 PERSONAS = []
