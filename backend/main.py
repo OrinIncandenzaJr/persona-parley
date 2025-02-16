@@ -38,7 +38,11 @@ client = OpenAI(api_key=api_key)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        "https://*.amplifyapp.com",  # This will allow any Amplify app domain
+        os.getenv('FRONTEND_URL', '')  # Optional: Add specific frontend URL from environment
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
