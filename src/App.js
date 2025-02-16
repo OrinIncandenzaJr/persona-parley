@@ -8,6 +8,7 @@ import QuestionSuggestions from './components/QuestionSuggestions';
 import './App.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8000';
+console.log('API_URL:', API_URL);
 
 function App() {
   const [messages, setMessages] = useState(() => {
@@ -83,7 +84,10 @@ function App() {
         },
         body: JSON.stringify({ question }),
       });
+      
+      console.log('Response status:', response.status);
       const data = await response.json();
+      console.log('Response data:', data);
       setPersonas(data);
       setSelectedPersona('all'); // Reset to "All" when new personas are generated
       return data;
@@ -95,6 +99,9 @@ function App() {
 
   // Function to handle initial question submission
   const handleInitialQuestion = async (question) => {
+    console.log('Attempting to submit initial question:', question);
+    console.log('API endpoint:', `${API_URL}/personas`);
+    
     setIsLoading(true);
     try {
       if (question.trim().toLowerCase() === "test") {
@@ -192,7 +199,11 @@ function App() {
         }
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Detailed error:', {
+        message: error.message,
+        stack: error.stack,
+        response: error.response
+      });
     } finally {
       setIsLoading(false);
     }

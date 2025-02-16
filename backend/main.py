@@ -197,7 +197,14 @@ if __name__ == "__main__":
 @app.post("/personas")
 async def get_personas(payload: QuestionPayload) -> List[dict]:
     """Generate and return list of personas relevant to the question"""
-    return await generate_personas(payload.question)
+    print(f"Received question: {payload.question}")  # Add this line
+    try:
+        personas = await generate_personas(payload.question)
+        print(f"Generated personas: {personas}")  # Add this line
+        return personas
+    except Exception as e:
+        print(f"Error generating personas: {str(e)}")  # Add this line
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/ask_debate")
 async def ask_debate(payload: DebatePayload):
