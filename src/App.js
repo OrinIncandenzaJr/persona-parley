@@ -31,24 +31,38 @@ function App() {
     try {
       const response = await fetch(`${API_URL}/generate_suggestions`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ question: topic }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: topic })
       });
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`Failed to generate suggestions: ${response.status}`);
       }
-      const data = await response.json();
-      if (Array.isArray(data)) {
-        setSuggestions(data);
-      } else {
-        console.error('Received non-array suggestions:', data);
-        setSuggestions([]);
+
+      const { message_id } = await response.json();
+
+      // Poll for results
+      let result = null;
+      const maxAttempts = 30;
+      for (let i = 0; i < maxAttempts; i++) {
+        const pollResponse = await fetch(`${API_URL}/results/${message_id}`);
+        if (pollResponse.ok) {
+          result = await pollResponse.json();
+          break;
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
+
+      if (!result) {
+        throw new Error('Timeout waiting for suggestions');
+      }
+
+      const suggestions = JSON.parse(result.response);
+      setSuggestions(suggestions);
+
     } catch (error) {
       console.error('Error generating suggestions:', error);
-      setSuggestions([]); // Set empty array on error
+      setSuggestions([]);
     }
   };
 
@@ -109,57 +123,22 @@ function App() {
   // Function to handle initial question submission
   const handleInitialQuestion = async (question) => {
     console.log('Attempting to submit initial question:', question);
-    console.log('API endpoint:', `${API_URL}/personas`);
-    
     setIsLoading(true);
     try {
-      // After personas generation
-      const personas = await generatePersonas(question);
-      console.log('Generated personas:', personas);
-
       if (question.trim().toLowerCase() === "test") {
         const mockPersonas = [
-          { 
-            id: "all", 
-            name: "All", 
-            description: "Get responses from all personas" 
-          },
-          { 
-            id: "philosopher", 
-            name: "Alex the Philosopher", 
-            description: "Expert in ethics and metaphysics" 
-          },
-          { 
-            id: "scientist", 
-            name: "Sarah the Scientist", 
-            description: "Specialized in quantum physics" 
-          },
-          { 
-            id: "historian", 
-            name: "Marcus the Historian", 
-            description: "Expert in ancient civilizations" 
-          },
-          { 
-            id: "artist", 
-            name: "Luna the Artist", 
-            description: "Contemporary visual artist" 
-          }
+          { id: "all", name: "All", description: "Get responses from all personas" },
+          { id: "philosopher", name: "Alex the Philosopher", description: "Expert in ethics and metaphysics" },
+          { id: "scientist", name: "Sarah the Scientist", description: "Specialized in quantum physics" },
+          { id: "historian", name: "Marcus the Historian", description: "Expert in ancient civilizations" },
+          { id: "artist", name: "Luna the Artist", description: "Contemporary visual artist" }
         ];
         setPersonas(mockPersonas);
         
         const mockMessages = [
-          { 
-            persona: "Moderator", 
-            content: "Let's explore the relationship between art and science." 
-          },
-          { 
-            persona: "Alex the Philosopher", 
-            content: "**The intersection of art and science reveals fundamental truths about human perception.**\n\n### Key Points\n• Both domains seek to understand reality\n• Art provides intuitive insights while science offers empirical evidence\n\n> 🤔 We must consider how these approaches complement each other." 
-          },
-          { 
-            persona: "Sarah the Scientist", 
-            content: "### Scientific Perspective\n\n**Research shows that artistic activities stimulate multiple brain regions simultaneously.**\n\n• Neural imaging reveals increased connectivity during creative tasks\n• The scientific method itself often requires creative thinking\n\n> 🧬 The boundary between art and science is more fluid than many realize." 
-          }
+          { persona: "Moderator", content: "Let's explore the relationship between art and science." },
+          { persona: "Alex the Philosopher", content: "**The intersection of art and science reveals fundamental truths about human perception.**\n\n### Key Points\n• Both domains seek to understand reality\n• Art provides intuitive insights while science offers empirical evidence\n\n> 🤔 We must consider how these approaches complement each other." },
+          { persona: "Sarah the Scientist", content: "### Scientific Perspective\n\n**Research shows that artistic activities stimulate multiple brain regions simultaneously.**\n\n• Neural imaging reveals increased connectivity during creative tasks\n• The scientific method itself often requires creative thinking\n\n> 🧬 The boundary between art and science is more fluid than many realize." }
         ];
         setMessages(mockMessages);
         setSelectedPersona('all');
@@ -167,54 +146,89 @@ function App() {
         return;
       }
 
-      // Use the result from the earlier personas generation
-      if (personas) {
-        const initialMessages = [{ persona: "Moderator", content: question }];
-        setMessages(initialMessages);
-        
-        // Automatically get responses from all personas
-        const payload = {
+      // Send initial request to generate personas
+      const response = await fetch(`${API_URL}/personas`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to submit question: ${response.status}`);
+      }
+
+      const { message_id } = await response.json();
+      
+      // Poll for results
+      let result = null;
+      const maxAttempts = 30; // 30 seconds timeout
+      for (let i = 0; i < maxAttempts; i++) {
+        const pollResponse = await fetch(`${API_URL}/results/${message_id}`);
+        if (pollResponse.ok) {
+          result = await pollResponse.json();
+          break;
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
+      if (!result) {
+        throw new Error('Timeout waiting for response');
+      }
+
+      // Parse and set personas
+      const personas = JSON.parse(result.response);
+      setPersonas(personas);
+      setSelectedPersona('all');
+
+      // Initialize conversation with moderator message
+      const initialMessages = [{ persona: "Moderator", content: question }];
+      setMessages(initialMessages);
+
+      // Get initial responses from all personas
+      const debateResponse = await fetch(`${API_URL}/ask_debate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           new_message: question,
           speaker_id: 'all',
           conversation_history: initialMessages
-        };
-        console.log('Sending ask_debate payload:', payload);
-        
-        try {
-          const response = await fetch(`${API_URL}/ask_debate`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-          });
-          
-          console.log('ask_debate response status:', response.status);
-          
-          if (!response.ok) {
-            throw new Error(`Failed to get initial responses: ${response.status}`);
-          }
-          
-          const data = await response.json();
-          console.log('ask_debate response data:', data);
-          const newMessages = [...initialMessages];
-          
-          if (data.responses) {
-            data.responses.forEach(response => {
-              newMessages.push({
-                persona: response.persona.name,
-                content: response.content
-              });
-            });
-          }
-          await generateSuggestions(question);
-          
-          setMessages(newMessages);
-          await generateSuggestions(question);
-        } catch (error) {
-          console.error('Error getting initial responses:', error);
-        }
+        })
+      });
+
+      if (!debateResponse.ok) {
+        throw new Error(`Failed to get initial responses: ${debateResponse.status}`);
       }
+
+      const { message_id: debateMessageId } = await debateResponse.json();
+
+      // Poll for debate responses
+      let debateResult = null;
+      for (let i = 0; i < maxAttempts; i++) {
+        const pollResponse = await fetch(`${API_URL}/results/${debateMessageId}`);
+        if (pollResponse.ok) {
+          debateResult = await pollResponse.json();
+          break;
+        }
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
+      if (!debateResult) {
+        throw new Error('Timeout waiting for debate responses');
+      }
+
+      // Update messages with responses
+      const responses = JSON.parse(debateResult.response);
+      const newMessages = [...initialMessages];
+      responses.forEach(response => {
+        newMessages.push({
+          persona: response.persona.name,
+          content: response.content
+        });
+      });
+      setMessages(newMessages);
+
+      // Generate suggestions
+      await generateSuggestions(question);
     } catch (error) {
       console.error('Detailed error:', {
         message: error.message,
@@ -247,93 +261,67 @@ function App() {
         await generateSuggestions("How does technology influence this relationship?");
         return;
       }
-      
+
       const payload = {
         new_message: message,
         speaker_id: selectedPersona,
         conversation_history: messages
       };
-      
-      console.log('Submitting:', payload);
-      
-      // Add timeout to fetch
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 25000); // 25 second timeout
 
       const response = await fetch(`${API_URL}/ask_debate`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-        signal: controller.signal,
-        credentials: 'include'  // Add this line
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
-      
-      clearTimeout(timeoutId);
-      
+
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Server error:', errorData);
-        throw new Error(`Server error: ${JSON.stringify(errorData)}`);
+        throw new Error(`Failed to submit message: ${response.status}`);
       }
-      
-      const data = await response.json();
-      console.log('Response received:', data);
-      
-      // Add user's message if one was provided
+
+      const { message_id } = await response.json();
+
+      // Add user's message
       const newMessages = [...messages];
       if (message.trim()) {
         newMessages.push({ persona: "Moderator", content: message.trim() });
       }
-      
-      // Clean up AI response - remove any persona prefixes and introductions
-      let cleanResponse = data.response;
-      const personaNames = personas.map(p => p.name);
-      personaNames.forEach(name => {
-        // Remove various forms of persona introductions
-        const patterns = [
-          `^As\\s+${name}\\s+the\\s+[^,]+,\\s*`,    // Matches "As Akiko the Anime Fan, "
-          `^${name}\\s+the\\s+[^,]+,\\s*`,          // Matches "Akiko the Anime Fan, "
-          `^${name}:\\s*`,                          // "Name:"
-          `^${name}\\s*:`,                          // "Name :"
-          `^${name}\\s+the\\s+[^:]+:\\s*`,         // "Name the Title:"
-          `^As\\s+a\\s+${name},\\s*`,              // "As a Name,"
-          `^As\\s+${name},\\s*`,                    // "As Name,"
-          `^${name}\\s+here[.,]\\s*`,              // "Name here."
-          `^This\\s+is\\s+${name}[.,]\\s*`,        // "This is Name."
-          `^Speaking\\s+as\\s+${name}[.,]\\s*`,    // "Speaking as Name."
-          `^From\\s+${name}'s\\s+perspective[.,]\\s*`, // "From Name's perspective."
-          `^As\\s+${name}\\s+I\\s+`,               // "As Name I"
-          `^${name}\\s+the\\s+[^:]+\\s*[:-]\\s*`,  // "Name the Title: " or "Name the Title - "
-        ];
-        
-        patterns.forEach(pattern => {
-          const regex = new RegExp(pattern, 'i');
-          cleanResponse = cleanResponse.replace(regex, '');
-        });
-      });
-      
-      // Handle responses based on whether it's "all" or individual persona
-      if (selectedPersona === 'all') {
-        if (data.responses) {
-          data.responses.forEach(response => {
-            newMessages.push({
-              persona: response.persona.name,
-              content: response.content
-            });
-          });
+      setMessages(newMessages);
+
+      // Poll for results
+      let result = null;
+      const maxAttempts = 30;
+      for (let i = 0; i < maxAttempts; i++) {
+        const pollResponse = await fetch(`${API_URL}/results/${message_id}`);
+        if (pollResponse.ok) {
+          result = await pollResponse.json();
+          break;
         }
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
+      if (!result) {
+        throw new Error('Timeout waiting for response');
+      }
+
+      // Parse and add responses
+      const responses = JSON.parse(result.response);
+      if (selectedPersona === 'all') {
+        responses.forEach(response => {
+          newMessages.push({
+            persona: response.persona.name,
+            content: response.content
+          });
+        });
       } else {
-        // Add single persona response
-        newMessages.push({ 
-          persona: data.persona.name, 
-          content: cleanResponse.trim() 
+        newMessages.push({
+          persona: responses.persona.name,
+          content: responses.response
         });
       }
       setMessages(newMessages);
-      await generateSuggestions(message); // Moved outside the else block
-      
+
+      // Generate new suggestions
+      await generateSuggestions(message);
     } catch (error) {
       console.error('Error submitting question:', error);
       // Add user-friendly error handling
