@@ -52,8 +52,9 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://main.d1wv9cggx4trj9.amplifyapp.com"],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
+    expose_headers=["Content-Type"]
 )
 
 @app.get("/")
