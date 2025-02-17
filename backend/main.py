@@ -6,6 +6,7 @@ from openai import OpenAI
 import os
 import boto3
 from botocore.exceptions import ClientError
+import uuid
 from mangum import Mangum
 import json
 import sys
@@ -42,6 +43,10 @@ if not api_key:
     raise ValueError("OpenAI API key not found in environment or Parameter Store")
     
 client = OpenAI(api_key=api_key, http_client=None)
+
+# Initialize SQS client
+sqs = boto3.client('sqs')
+QUEUE_URL = os.environ.get('SQS_QUEUE_URL')
 
 app.add_middleware(
     CORSMiddleware,
@@ -188,25 +193,36 @@ class QuestionPayload(BaseModel):
 
 @app.post("/generate_suggestions")
 async def generate_suggestions(payload: QuestionPayload):
-    """Generate suggested follow-up questions based on the conversation"""
+    """Enqueue suggestion generation request to SQS"""
     try:
-        prompt = """Given the current debate topic, generate 5 thought-provoking follow-up questions that would deepen the discussion.
+        # Generate unique message ID
+        message_id = str(uuid.uuid4())
+        
+        # Prepare message for SQS
+        message = {
+            "request_type": "suggestions",
+            "question": payload.question,
+            "prompt": """Given the current debate topic, generate 5 thought-provoking follow-up questions that would deepen the discussion.
         Make questions concise and specific. Return only a JSON array of strings.
         Example: ["How does X impact Y?", "What role does Z play in this?"]"""
+        }
         
-        response = client.chat.completions.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": prompt},
-                {"role": "user", "content": f"Topic: {payload.question}"}
-            ],
-            temperature=0.7,
-            max_tokens=500
+        # Send to SQS
+        response = sqs.send_message(
+            QueueUrl=QUEUE_URL,
+            MessageBody=json.dumps(message),
+            MessageAttributes={
+                'MessageId': {
+                    'DataType': 'String',
+                    'StringValue': message_id
+                }
+            }
         )
         
-        import json
-        suggestions = json.loads(response.choices[0].message.content)
-        return suggestions
+        return {
+            "message": "Request accepted for processing",
+            "message_id": message_id
+        }
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -216,23 +232,77 @@ if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
 
 @app.post("/personas")
-async def get_personas(payload: QuestionPayload) -> List[dict]:
-    """Generate and return list of personas relevant to the question"""
-    print(f"Received question: {payload.question}")  # Add this line
+async def get_personas(payload: QuestionPayload) -> dict:
+    """Enqueue persona generation request to SQS"""
+    print(f"Received question: {payload.question}")
     try:
-        personas = await generate_personas(payload.question)
-        print(f"Generated personas: {personas}")  # Add this line
-        return personas
+        # Generate unique message ID
+        message_id = str(uuid.uuid4())
+        
+        # Prepare message for SQS
+        message = {
+            "request_type": "personas",
+            "question": payload.question,
+            "system_prompt": """Given the debate question, generate 4 distinct and relevant personas that would provide valuable perspectives.
+Each persona should have a characterful first name followed by their role (e.g., "Brian the Philosopher", "Sarah the Scientist").
+You must return a valid JSON array containing exactly 4 objects. Each object must have these fields:
+- 'id': lowercase hyphenated string (e.g., 'tech-expert')
+- 'name': display name string (e.g., "Marcus the Tech Expert")
+- 'description': brief description string"""
+        }
+        
+        # Send to SQS
+        response = sqs.send_message(
+            QueueUrl=QUEUE_URL,
+            MessageBody=json.dumps(message),
+            MessageAttributes={
+                'MessageId': {
+                    'DataType': 'String',
+                    'StringValue': message_id
+                }
+            }
+        )
+        
+        return {
+            "message": "Request accepted for processing",
+            "message_id": message_id
+        }
+        
     except Exception as e:
-        print(f"Error generating personas: {str(e)}")  # Add this line
+        print(f"Error enqueueing persona request: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/ask_debate")
 async def ask_debate(payload: DebatePayload):
     print("Received ask_debate payload:", payload)
     try:
-        if payload.speaker_id == "all":
-            print("Processing all personas response")
+        # Generate unique message ID
+        message_id = str(uuid.uuid4())
+        
+        # Prepare message for SQS
+        message = {
+            "request_type": "debate",
+            "speaker_id": payload.speaker_id,
+            "new_message": payload.new_message,
+            "conversation_history": [msg.dict() for msg in payload.conversation_history]
+        }
+        
+        # Send to SQS
+        response = sqs.send_message(
+            QueueUrl=QUEUE_URL,
+            MessageBody=json.dumps(message),
+            MessageAttributes={
+                'MessageId': {
+                    'DataType': 'String',
+                    'StringValue': message_id
+                }
+            }
+        )
+        
+        return {
+            "message": "Request accepted for processing",
+            "message_id": message_id
+        }
             # Handle all personas case
             all_responses = []
             for persona in [p for p in PERSONAS if p["id"] != "all"]:
