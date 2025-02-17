@@ -47,13 +47,15 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://*.amplifyapp.com",  # This will allow any Amplify app domain
-        os.getenv('FRONTEND_URL', ''),  # Optional: Add specific frontend URL from environment
-        "https://6va7jv28x3.execute-api.us-east-1.amazonaws.com"  # Add API Gateway domain
+        "https://*.amplifyapp.com",
+        "https://main.d1wv9cggx4trj9.amplifyapp.com",  # Add your specific Amplify domain
+        "https://g57waua8xg.execute-api.us-east-1.amazonaws.com",  # Add your API Gateway domain
+        "*"  # Temporarily allow all origins for testing
     ],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
+    expose_headers=["*"]
 )
 
 @app.get("/")
@@ -74,18 +76,21 @@ def read_root():
 
 # Wrap FastAPI app with Mangum for AWS Lambda
 def lambda_handler(event, context):
-    print("Received event:", json.dumps(event, indent=2))  # Log incoming event
+    print("Received event:", json.dumps(event, indent=2))
     mangum_handler = Mangum(app)
     response = mangum_handler(event, context)
-    print("Returning response to API Gateway:", json.dumps(response))
-    return {
-        "statusCode": 200,
-        "headers": {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-        },
-        "body": json.dumps(response),
-    }
+    
+    # Ensure CORS headers are present
+    if isinstance(response, dict):
+        headers = response.get('headers', {})
+        headers.update({
+            'Access-Control-Allow-Origin': '*',  # Or your specific domain
+            'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+        })
+        response['headers'] = headers
+    
+    return response
 
 # Initialize empty personas list
 PERSONAS = []

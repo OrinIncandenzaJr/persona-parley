@@ -43,7 +43,17 @@ functions:
       - http:
           path: /{proxy+}
           method: ANY
-          cors: true
+          cors:
+            origin: '*'  # Or specify your domains
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Requested-With
+            allowCredentials: true
+            maxAge: 86400
     environment:
       STAGE: ${sls:stage}
     package:

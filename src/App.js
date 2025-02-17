@@ -256,13 +256,20 @@ function App() {
       
       console.log('Submitting:', payload);
       
+      // Add timeout to fetch
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 25000); // 25 second timeout
+
       const response = await fetch(`${API_URL}/ask_debate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
       
       if (!response.ok) {
         const errorData = await response.json();
@@ -328,6 +335,11 @@ function App() {
       
     } catch (error) {
       console.error('Error submitting question:', error);
+      // Add user-friendly error handling
+      if (error.name === 'AbortError') {
+        // Handle timeout
+        console.error('Request timed out');
+      }
     } finally {
       setIsLoading(false);
     }
