@@ -1,12 +1,14 @@
 import React from 'react';
 
-function PersonaSelector({ onPersonaSelect, selectedPersona, personas = [] }) {
+function PersonaSelector({ onPersonaSelect, selectedPersona, personas }) {
+  // Ensure personas is always an array
+  const personaList = Array.isArray(personas) ? personas : [];
 
   return (
     <div>
       <h2 className="text-lg font-semibold mb-4">Personas</h2>
       <div className="flex flex-col gap-4 items-stretch">
-        {personas.map((persona) => (
+        {personaList.map((persona) => (
           <button
             key={persona.id}
             onClick={() => onPersonaSelect(selectedPersona === persona.id ? null : persona.id)}
@@ -22,7 +24,7 @@ function PersonaSelector({ onPersonaSelect, selectedPersona, personas = [] }) {
       </div>
       {selectedPersona && (
         <div className="mt-3 text-center text-sm text-blue-400 font-medium">
-          Speaking as: {personas.find(p => p.id === selectedPersona)?.name || 'Unknown'}
+          Speaking as: {personaList.find(p => p.id === selectedPersona)?.name || 'Unknown'}
         </div>
       )}
     </div>
