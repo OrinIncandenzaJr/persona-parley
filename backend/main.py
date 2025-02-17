@@ -50,13 +50,10 @@ QUEUE_URL = os.environ.get('SQS_QUEUE_URL')
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://main.d1wv9cggx4trj9.amplifyapp.com",  # Only allow your specific Amplify domain
-    ],
+    allow_origins=["https://main.d1wv9cggx4trj9.amplifyapp.com"],
     allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"]
 )
 
 @app.get("/")
@@ -79,19 +76,7 @@ def read_root():
 def lambda_handler(event, context):
     print("Received event:", json.dumps(event, indent=2))
     mangum_handler = Mangum(app)
-    response = mangum_handler(event, context)
-    
-    # Ensure CORS headers are present
-    if isinstance(response, dict):
-        headers = response.get('headers', {})
-        headers.update({
-            'Access-Control-Allow-Origin': '*',  # Or your specific domain
-            'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
-            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
-        })
-        response['headers'] = headers
-    
-    return response
+    return mangum_handler(event, context)
 
 # Initialize empty personas list
 PERSONAS = []

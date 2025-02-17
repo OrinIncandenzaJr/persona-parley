@@ -92,7 +92,17 @@ functions:
       - http:
           path: /results/{message_id}
           method: GET
-          cors: true
+          cors:
+            origin: 'https://main.d1wv9cggx4trj9.amplifyapp.com'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Requested-With
+            allowCredentials: true
+            maxAge: 86400
     package:
       patterns:
         - 'backend/**/*.py'
