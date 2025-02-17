@@ -16,8 +16,15 @@ provider:
         - Effect: Allow
           Action:
             - ssm:GetParameter
+            - sqs:SendMessage
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+            - dynamodb:PutItem
+            - dynamodb:GetItem
           Resource: 
             - arn:aws:ssm:${aws:region}:${aws:accountId}:parameter/persona-parley/*
+            - !GetAtt OpenAISQSQueue.Arn
+            - !GetAtt OpenAIResultsTable.Arn
 
 package:
   individually: true
@@ -40,10 +47,10 @@ package:
 functions:
   api:
     handler: backend.main.lambda_handler
-    timeout: 60  # Increase timeout
-    memorySize: 1024  # Increase memory
+    timeout: 10
+    memorySize: 1024
     layers:
-      - { Ref: PythonRequirementsLambdaLayer }  # This ensures Lambda loads the layer
+      - { Ref: PythonRequirementsLambdaLayer }
     events:
       - http:
           path: /{proxy+}
@@ -61,6 +68,31 @@ functions:
             maxAge: 86400
     environment:
       STAGE: ${sls:stage}
+      SQS_QUEUE_URL: !Ref OpenAISQSQueue
+
+  processOpenAI:
+    handler: backend.process.lambda_handler
+    timeout: 30
+    memorySize: 1024
+    layers:
+      - { Ref: PythonRequirementsLambdaLayer }
+    events:
+      - sqs:
+          arn: !GetAtt OpenAISQSQueue.Arn
+    environment:
+      OPENAI_API_KEY: ${ssm:/persona-parley/OPENAI_API_KEY}
+
+  getResults:
+    handler: backend.get_results.lambda_handler
+    timeout: 10
+    memorySize: 1024
+    layers:
+      - { Ref: PythonRequirementsLambdaLayer }
+    events:
+      - http:
+          path: /results/{message_id}
+          method: GET
+          cors: true
     package:
       patterns:
         - 'backend/**/*.py'
@@ -72,7 +104,7 @@ plugins:
 custom:
   pythonRequirements:
     layer:
-      name: persona-parley-deps-${sls:stage}-${sls:instanceId}  # Forces a unique layer per deploy
+      name: persona-parley-deps-${sls:stage}-${sls:instanceId}
     noDeploy:
       - boto3
       - botocore
@@ -82,3 +114,24 @@ custom:
     slim: true
     strip: true
     dockerizePip: true
+
+resources:
+  Resources:
+    OpenAISQSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: openai-requests-queue-${sls:stage}
+        VisibilityTimeout: 60
+        MessageRetentionPeriod: 1209600
+        
+    OpenAIResultsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: openai-results-${sls:stage}
+        AttributeDefinitions:
+          - AttributeName: message_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: message_id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
