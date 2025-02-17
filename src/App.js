@@ -266,7 +266,8 @@ function App() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
-        signal: controller.signal
+        signal: controller.signal,
+        credentials: 'include'  // Add this line
       });
       
       clearTimeout(timeoutId);
@@ -337,8 +338,9 @@ function App() {
       console.error('Error submitting question:', error);
       // Add user-friendly error handling
       if (error.name === 'AbortError') {
-        // Handle timeout
-        console.error('Request timed out');
+        alert('Request timed out. Please try again.');
+      } else {
+        alert('Error submitting question. Please try again.');
       }
     } finally {
       setIsLoading(false);

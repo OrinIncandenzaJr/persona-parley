@@ -46,14 +46,10 @@ client = OpenAI(api_key=api_key, http_client=None)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",
-        "https://*.amplifyapp.com",
-        "https://main.d1wv9cggx4trj9.amplifyapp.com",  # Add your specific Amplify domain
-        "https://g57waua8xg.execute-api.us-east-1.amazonaws.com",  # Add your API Gateway domain
-        "*"  # Temporarily allow all origins for testing
+        "https://main.d1wv9cggx4trj9.amplifyapp.com",  # Only allow your specific Amplify domain
     ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
     expose_headers=["*"]
 )

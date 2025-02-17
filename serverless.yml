@@ -4,6 +4,10 @@ provider:
   name: aws
   runtime: python3.12
   region: us-east-1
+  apiGateway:
+    binaryMediaTypes:
+      - '*/*'
+    minimumCompressionSize: 1024
   environment:
     OPENAI_API_KEY: ${ssm:/persona-parley/OPENAI_API_KEY}
   iam:
@@ -36,7 +40,8 @@ package:
 functions:
   api:
     handler: backend.main.lambda_handler
-    timeout: 29
+    timeout: 60  # Increase timeout
+    memorySize: 1024  # Increase memory
     layers:
       - { Ref: PythonRequirementsLambdaLayer }  # This ensures Lambda loads the layer
     events:
@@ -44,7 +49,7 @@ functions:
           path: /{proxy+}
           method: ANY
           cors:
-            origin: '*'  # Or specify your domains
+            origin: 'https://main.d1wv9cggx4trj9.amplifyapp.com'
             headers:
               - Content-Type
               - X-Amz-Date
