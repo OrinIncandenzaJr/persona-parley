@@ -36,7 +36,7 @@ package:
 functions:
   api:
     handler: backend.main.lambda_handler
-    timeout: 30  # Increase timeout to 30 seconds
+    timeout: 29
     layers:
       - { Ref: PythonRequirementsLambdaLayer }  # This ensures Lambda loads the layer
     events:
